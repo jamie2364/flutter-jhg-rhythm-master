@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -9,12 +10,73 @@ import 'package:rhythm_master/utils/app_utils.dart';
 import 'package:rhythm_master/models/sound_model.dart';
 import 'package:rhythm_master/services/local_db.dart';
 
+import '../models/beat_indicator_model.dart';
 import '../utils/app_assets.dart';
 
 //The MetroProvider class is responsible for managing the metronome functionality,
 //controlling BPM, animation, and sound playback.
 
+
 class MetroProvider extends ChangeNotifier {
+
+  List <BeatIndicator> beatIndicator = [];
+
+  createBeatIndicatorList(){
+
+    int listLength = totalBeat;
+
+    if(listLength > 6){
+      setBeatIndicatorState(true);
+      return;
+    }
+
+    setBeatIndicatorState(false);
+    beatIndicator = List.generate(listLength, (index) {
+         bool isAccented = index == 0 ? true : false;
+         bool isMutedBeat = false;
+         bool isPlanBeat = index == 0 ? false : true;
+        return BeatIndicator(
+            isAccentedBeat: isAccented,
+            isMutedBeat: isMutedBeat,
+            isPlanBeat: isPlanBeat);
+
+    });
+    notifyListeners();
+
+  }
+
+
+  updateBeatIndicatorList(int selectedIndex){
+
+        if( beatIndicator[selectedIndex].isAccentedBeat == true){
+
+          beatIndicator[selectedIndex].isAccentedBeat = false;
+          beatIndicator[selectedIndex].isPlanBeat = true;
+          beatIndicator[selectedIndex].isMutedBeat = false;
+
+        }else if(beatIndicator[selectedIndex].isPlanBeat == true){
+
+          beatIndicator[selectedIndex].isAccentedBeat = false;
+          beatIndicator[selectedIndex].isPlanBeat = false;
+          beatIndicator[selectedIndex].isMutedBeat = true;
+
+        }
+        else if(beatIndicator[selectedIndex].isMutedBeat == true){
+          beatIndicator[selectedIndex].isAccentedBeat = true;
+          beatIndicator[selectedIndex].isPlanBeat = false;
+          beatIndicator[selectedIndex].isMutedBeat = false;
+
+        }
+
+    notifyListeners();
+
+  }
+
+  bool hideBeatIndicator  = false;
+  setBeatIndicatorState(bool state){
+    hideBeatIndicator = state;
+    notifyListeners();
+  }
   // Custom value selection
   int beatNumerator = 2;
   int beatDenominator = 2;
@@ -195,6 +257,7 @@ class MetroProvider extends ChangeNotifier {
     // Preload sounds
     await preloadSounds();
 
+
     // Notify listeners
     notifyListeners();
   }
@@ -374,12 +437,14 @@ class MetroProvider extends ChangeNotifier {
       {required TickerProviderStateMixin ticker,
       required int index,
       required String indexValue}) {
+
     customBeatValue = null;
     selectedButton = index;
     beatNumerator = 2;
     beatDenominator = 2;
     notifyListeners();
     getBeatsDuration(indexValue, index);
+    createBeatIndicatorList();
     if (isPlaying) {
       setTimer(ticker);
     }
@@ -406,24 +471,36 @@ class MetroProvider extends ChangeNotifier {
 
 // Play sound based on the metronome ticks
   Future<void> playSound() async {
+
+
     // Ensure players have the correct volume
     if (player1.volume == 0 || player2.volume == 0) {
       player1.setVolume(1.0);
       player2.setVolume(1.0);
     }
 
+
+
+
     totalTick += 1;
 
     // Determine which beat to play
     if (totalTick == 1) {
-      playBeat(firstBeat, player1);
+      //playBeat(firstBeat, player1);
     } else if (totalTick <= totalBeat) {
-      playBeat(secondBeat, player2);
-
+     // playBeat(secondBeat, player2);
       // Reset totalTick if the beat cycle is complete
       if (totalTick == totalBeat) {
         totalTick = 0;
       }
+    }
+
+    if(beatIndicator[totalTick].isAccentedBeat == true){
+      playBeat(firstBeat, player1);
+    }else if(beatIndicator[totalTick].isPlanBeat == true){
+      playBeat(secondBeat, player2);
+    } else if(beatIndicator[totalTick].isMutedBeat == true){
+
     }
   }
 

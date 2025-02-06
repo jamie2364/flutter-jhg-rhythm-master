@@ -9,6 +9,8 @@ import 'package:rhythm_master/views/extension/int_extension.dart';
 import 'package:rhythm_master/views/extension/widget_extension.dart';
 import 'package:rhythm_master/views/widgets/custom_selection_bottomsheet.dart';
 
+import '../../models/beat_indicator_model.dart';
+
 class MetroView extends StatefulWidget {
   const MetroView({super.key});
 
@@ -338,6 +340,56 @@ class _MetroViewState extends State<MetroView> with TickerProviderStateMixin {
                                 ),
                               ],
                             ),
+                          ),
+
+
+                          // SPACER
+                          //SizedBox(width: width * 0.03),
+                          SizedBox(width: 4.0.w),
+
+                          Container(
+                            // height: height * 0.40,
+                            width: height * 0.022,
+                            child:
+
+                            controller.hideBeatIndicator ? SizedBox():
+                            ListView.builder(
+                                physics: AlwaysScrollableScrollPhysics(),
+                                padding: EdgeInsets.zero,
+                                primary: true,
+                                itemCount: controller.beatIndicator.length,
+                                shrinkWrap: true,
+                                scrollDirection: Axis.vertical,
+                                itemBuilder: (context, index) {
+                                  final BeatIndicator  beatIndicator = controller.beatIndicator[index];
+                                  return MouseRegion(
+                                      cursor: SystemMouseCursors.click,
+                                      child: GestureDetector(
+                                        onTap: () async {
+                                          controller.updateBeatIndicatorList(index);
+                                        },
+                                        child: Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: height * 0.014),
+                                          child: Container(
+                                            height: height * 0.022,
+                                            width: height * 0.022,
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color:
+                                              beatIndicator.isAccentedBeat ? AppColors.redPrimary :
+                                              beatIndicator.isPlanBeat ? AppColors.greySecondary :
+                                                  AppColors.greyPrimary ,
+
+                                              // controller.selectedButton ==
+                                              //     index
+                                              //     ? AppColors.greySecondary
+                                              //     : AppColors.greyPrimary,
+                                            ),
+                                          ),
+                                        ),
+                                      ));
+                                }),
                           ),
                         ],
                       ),
