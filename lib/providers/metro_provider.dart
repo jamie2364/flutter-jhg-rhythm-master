@@ -469,6 +469,8 @@ class MetroProvider extends ChangeNotifier {
     }
   }
 
+
+
 // Play sound based on the metronome ticks
   Future<void> playSound() async {
 
@@ -479,10 +481,6 @@ class MetroProvider extends ChangeNotifier {
       player2.setVolume(1.0);
     }
 
-
-
-
-    totalTick += 1;
 
     // Determine which beat to play
     if (totalTick == 1) {
@@ -502,6 +500,9 @@ class MetroProvider extends ChangeNotifier {
     } else if(beatIndicator[totalTick].isMutedBeat == true){
 
     }
+
+    totalTick += 1;
+    notifyListeners();
   }
 
  // Play the specified beat using the given audio player

@@ -376,9 +376,15 @@ class _MetroViewState extends State<MetroView> with TickerProviderStateMixin {
                                             width: height * 0.022,
                                             decoration: BoxDecoration(
                                               shape: BoxShape.circle,
+                                              border: Border.all( 
+                                                width: 2,
+                                                color:
+                                                beatIndicator.isAccentedBeat ? AppColors.redPrimary :
+                                                beatIndicator.isPlanBeat ? AppColors.greySecondary :
+                                                AppColors.greyPrimary, ),
                                               color:
-                                              beatIndicator.isAccentedBeat ? AppColors.redPrimary :
-                                              beatIndicator.isPlanBeat ? AppColors.greySecondary :
+                                              controller.totalTick-1 == index && beatIndicator.isAccentedBeat ?
+                                              AppColors.redPrimary : controller.totalTick-1 == index &&  beatIndicator.isPlanBeat ? AppColors.greySecondary :
                                                   AppColors.greyPrimary ,
 
                                               // controller.selectedButton ==
