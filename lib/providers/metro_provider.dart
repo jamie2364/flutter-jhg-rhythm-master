@@ -72,7 +72,7 @@ class MetroProvider extends ChangeNotifier {
 
   }
 
-  bool hideBeatIndicator  = false;
+  bool hideBeatIndicator = false;
   setBeatIndicatorState(bool state){
     hideBeatIndicator = state;
     notifyListeners();
@@ -256,8 +256,7 @@ class MetroProvider extends ChangeNotifier {
 
     // Preload sounds
     await preloadSounds();
-
-
+    createBeatIndicatorList();
     // Notify listeners
     notifyListeners();
   }
@@ -481,29 +480,48 @@ class MetroProvider extends ChangeNotifier {
       player2.setVolume(1.0);
     }
 
+    int listLength = totalBeat;
 
-    // Determine which beat to play
-    if (totalTick == 1) {
-      //playBeat(firstBeat, player1);
-    } else if (totalTick <= totalBeat) {
-     // playBeat(secondBeat, player2);
-      // Reset totalTick if the beat cycle is complete
-      if (totalTick == totalBeat) {
-        totalTick = 0;
+    if(listLength > 6){
+
+      if (totalTick == 1) {
+        playBeat(firstBeat, player1);
+      } else if (totalTick <= totalBeat) {
+        playBeat(secondBeat, player2);
+        // Reset totalTick if the beat cycle is complete
+        if (totalTick == totalBeat) {
+          totalTick = 0;
+        }
+      }
+
+    }else{
+      // Determine which beat to play
+      if (totalTick == 1) {
+        //playBeat(firstBeat, player1);
+      } else if (totalTick <= totalBeat) {
+        // playBeat(secondBeat, player2);
+        // Reset totalTick if the beat cycle is complete
+        if (totalTick == totalBeat) {
+          totalTick = 0;
+        }
+      }
+
+      if(beatIndicator[totalTick].isAccentedBeat == true){
+        playBeat(firstBeat, player1);
+      }else if(beatIndicator[totalTick].isPlanBeat == true){
+        playBeat(secondBeat, player2);
+      } else if(beatIndicator[totalTick].isMutedBeat == true){
+
       }
     }
 
-    if(beatIndicator[totalTick].isAccentedBeat == true){
-      playBeat(firstBeat, player1);
-    }else if(beatIndicator[totalTick].isPlanBeat == true){
-      playBeat(secondBeat, player2);
-    } else if(beatIndicator[totalTick].isMutedBeat == true){
 
-    }
 
     totalTick += 1;
     notifyListeners();
   }
+
+
 
  // Play the specified beat using the given audio player
   Future<void> playBeat(String beat, AudioPlayer player) async {
