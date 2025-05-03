@@ -246,7 +246,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                   //     ? SizedBox()
                                   //     :
                                   Expanded(
-                                    child: controller.selectedButton == 0
+                                    child: controller.selectedButton == 0 
                                         ? const MetroView()
                                         : // Now Metronome is first
                                         controller.selectedButton == 1

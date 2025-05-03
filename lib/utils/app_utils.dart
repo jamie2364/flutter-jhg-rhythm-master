@@ -8,6 +8,24 @@ import 'package:rhythm_master/views/extension/int_extension.dart';
 import 'package:rhythm_master/views/extension/widget_extension.dart';
 
 class AppUtils {
+  // percent values range between 1-0
+  static double getWidth(BuildContext context, {double percent = 1}) {
+    return (MediaQuery.of(context).size.width) * percent;
+  }
+
+  // percent values range between 1-0
+  static double getHeight(BuildContext context, {double percent = 1}) {
+    return (MediaQuery.of(context).size.height) * percent;
+  }
+
+  static EdgeInsets getWebDropdownEdgeInsets() {
+    return EdgeInsets.symmetric(vertical: 12, horizontal: 15);
+  }
+
+  static bool isWeb() {
+    return kIsWeb;
+  }
+
   AppUtils._();
   static void showPopup(
     BuildContext context,
@@ -78,7 +96,8 @@ class AppUtils {
   }
 
   static File setWebAsset(soundTracks) {
-    Uri uri = Uri.parse("${kDebugMode? '${AppStrings.webAsset}/':''}$soundTracks");
+    Uri uri =
+        Uri.parse("${kDebugMode ? '${AppStrings.webAsset}/' : ''}$soundTracks");
     File file = File.fromUri(uri);
     // print('file path:::-------------- ${file.path}');
     return file;

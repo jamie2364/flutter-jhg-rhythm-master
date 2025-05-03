@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_jhg_elements/jhg_elements.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:reg_page/reg_page.dart';
 import 'package:rhythm_master/utils/app_strings.dart';
@@ -16,67 +17,54 @@ import '../utils/app_assets.dart';
 //The MetroProvider class is responsible for managing the metronome functionality,
 //controlling BPM, animation, and sound playback.
 
-
 class MetroProvider extends ChangeNotifier {
+  List<BeatIndicator> beatIndicator = [];
 
-  List <BeatIndicator> beatIndicator = [];
-
-  createBeatIndicatorList(){
-
+  createBeatIndicatorList() {
     int listLength = totalBeat;
 
-    if(listLength > 6){
+    if (listLength > 6) {
       setBeatIndicatorState(true);
       return;
     }
 
     setBeatIndicatorState(false);
     beatIndicator = List.generate(listLength, (index) {
-         bool isAccented = index == 0 ? true : false;
-         bool isMutedBeat = false;
-         bool isPlanBeat = index == 0 ? false : true;
-        return BeatIndicator(
-            isAccentedBeat: isAccented,
-            isMutedBeat: isMutedBeat,
-            isPlanBeat: isPlanBeat);
-
+      bool isAccented = index == 0 ? true : false;
+      bool isMutedBeat = false;
+      bool isPlanBeat = index == 0 ? false : true;
+      return BeatIndicator(
+          isAccentedBeat: isAccented,
+          isMutedBeat: isMutedBeat,
+          isPlanBeat: isPlanBeat);
     });
     notifyListeners();
-
   }
 
-
-  updateBeatIndicatorList(int selectedIndex){
-
-        if( beatIndicator[selectedIndex].isAccentedBeat == true){
-
-          beatIndicator[selectedIndex].isAccentedBeat = false;
-          beatIndicator[selectedIndex].isPlanBeat = true;
-          beatIndicator[selectedIndex].isMutedBeat = false;
-
-        }else if(beatIndicator[selectedIndex].isPlanBeat == true){
-
-          beatIndicator[selectedIndex].isAccentedBeat = false;
-          beatIndicator[selectedIndex].isPlanBeat = false;
-          beatIndicator[selectedIndex].isMutedBeat = true;
-
-        }
-        else if(beatIndicator[selectedIndex].isMutedBeat == true){
-          beatIndicator[selectedIndex].isAccentedBeat = true;
-          beatIndicator[selectedIndex].isPlanBeat = false;
-          beatIndicator[selectedIndex].isMutedBeat = false;
-
-        }
+  updateBeatIndicatorList(int selectedIndex) {
+    if (beatIndicator[selectedIndex].isAccentedBeat == true) {
+      beatIndicator[selectedIndex].isAccentedBeat = false;
+      beatIndicator[selectedIndex].isPlanBeat = true;
+      beatIndicator[selectedIndex].isMutedBeat = false;
+    } else if (beatIndicator[selectedIndex].isPlanBeat == true) {
+      beatIndicator[selectedIndex].isAccentedBeat = false;
+      beatIndicator[selectedIndex].isPlanBeat = false;
+      beatIndicator[selectedIndex].isMutedBeat = true;
+    } else if (beatIndicator[selectedIndex].isMutedBeat == true) {
+      beatIndicator[selectedIndex].isAccentedBeat = true;
+      beatIndicator[selectedIndex].isPlanBeat = false;
+      beatIndicator[selectedIndex].isMutedBeat = false;
+    }
 
     notifyListeners();
-
   }
 
   bool hideBeatIndicator = false;
-  setBeatIndicatorState(bool state){
+  setBeatIndicatorState(bool state) {
     hideBeatIndicator = state;
     notifyListeners();
   }
+
   // Custom value selection
   int beatNumerator = 2;
   int beatDenominator = 2;
@@ -136,15 +124,16 @@ class MetroProvider extends ChangeNotifier {
   }
 
   Future<void> preloadSounds() async {
-    Future.wait([ player1.setVolume(0),player2.setVolume(0)]);
-    var directory1 = !kIsWeb ? Utils.getAsset(firstBeat)  : AppUtils.setWebAsset(firstBeat);
-    var directory2 = !kIsWeb ? Utils.getAsset(secondBeat) : AppUtils.setWebAsset(secondBeat);
+    Future.wait([player1.setVolume(0), player2.setVolume(0)]);
+    var directory1 =
+        !kIsWeb ? Utils.getAsset(firstBeat) : AppUtils.setWebAsset(firstBeat);
+    var directory2 =
+        !kIsWeb ? Utils.getAsset(secondBeat) : AppUtils.setWebAsset(secondBeat);
     Future.wait([
-     player1.setFilePath(directory1.path, preload: true),
-     player2.setFilePath(directory2.path, preload: true)
+      player1.setFilePath(directory1.path, preload: true),
+      player2.setFilePath(directory2.path, preload: true)
     ]);
   }
-
 
   incrementBeatNumerator() {
     if (beatNumerator < 96) {
@@ -250,9 +239,9 @@ class MetroProvider extends ChangeNotifier {
 
     // Configure beat and sound settings
     getBeatsDuration(defaultBeatValue!, selectedButton);
-    soundName = soundList[ selectedIndex ?? defaultSound!].name!;
-    firstBeat = soundList[ selectedIndex ?? defaultSound!].beat1!;
-    secondBeat = soundList[ selectedIndex ?? defaultSound!].beat2!;
+    soundName = soundList[selectedIndex ?? defaultSound!].name!;
+    firstBeat = soundList[selectedIndex ?? defaultSound!].beat1!;
+    secondBeat = soundList[selectedIndex ?? defaultSound!].beat2!;
 
     // Preload sounds
     await preloadSounds();
@@ -260,7 +249,6 @@ class MetroProvider extends ChangeNotifier {
     // Notify listeners
     notifyListeners();
   }
-
 
   // Dispose controller if off the page
   Future<void> disposeController() async {
@@ -289,7 +277,6 @@ class MetroProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-
   // Set position of the slider
   // Setting position, BPM, and notifying listeners
   setPosition(double value, TickerProviderStateMixin ticker) {
@@ -302,9 +289,8 @@ class MetroProvider extends ChangeNotifier {
     }
   }
 
-
   void adjustBpm(TickerProviderStateMixin ticker, int increment) {
-    double newBpm =  bpm + increment;
+    double newBpm = bpm + increment;
     if (newBpm >= bpmMin && newBpm <= bpmMax) {
       totalTick = 0;
       bpm = newBpm;
@@ -315,7 +301,8 @@ class MetroProvider extends ChangeNotifier {
     }
   }
 
-  void startContinuousBpmAdjustment(TickerProviderStateMixin ticker, int increment) {
+  void startContinuousBpmAdjustment(
+      TickerProviderStateMixin ticker, int increment) {
     bpmContinuousTimer?.cancel();
     bpmContinuousTimer = Timer.periodic(const Duration(milliseconds: 100), (_) {
       adjustBpm(ticker, increment);
@@ -327,9 +314,10 @@ class MetroProvider extends ChangeNotifier {
   void decreaseBpm(TickerProviderStateMixin ticker) => adjustBpm(ticker, -1);
 
 // Public methods for continuous adjustment
-  void continuousIncreaseBpm(TickerProviderStateMixin ticker) => startContinuousBpmAdjustment(ticker, 1);
-  void continuousDecreaseBpm(TickerProviderStateMixin ticker) => startContinuousBpmAdjustment(ticker, -1);
-
+  void continuousIncreaseBpm(TickerProviderStateMixin ticker) =>
+      startContinuousBpmAdjustment(ticker, 1);
+  void continuousDecreaseBpm(TickerProviderStateMixin ticker) =>
+      startContinuousBpmAdjustment(ticker, -1);
 
   // Start/stop the metronome
   // Toggling between start and stop states and notifying listeners
@@ -412,7 +400,7 @@ class MetroProvider extends ChangeNotifier {
 
     totalBeat = beatN;
 
-    Map<int,double> beatDurations = {
+    Map<int, double> beatDurations = {
       2: 120000,
       4: 60000,
       8: 30000,
@@ -436,7 +424,6 @@ class MetroProvider extends ChangeNotifier {
       {required TickerProviderStateMixin ticker,
       required int index,
       required String indexValue}) {
-
     customBeatValue = null;
     selectedButton = index;
     beatNumerator = 2;
@@ -468,12 +455,8 @@ class MetroProvider extends ChangeNotifier {
     }
   }
 
-
-
 // Play sound based on the metronome ticks
   Future<void> playSound() async {
-
-
     // Ensure players have the correct volume
     if (player1.volume == 0 || player2.volume == 0) {
       player1.setVolume(1.0);
@@ -482,8 +465,7 @@ class MetroProvider extends ChangeNotifier {
 
     int listLength = totalBeat;
 
-    if(listLength > 6){
-
+    if (listLength > 6) {
       if (totalTick == 1) {
         playBeat(firstBeat, player1);
       } else if (totalTick <= totalBeat) {
@@ -493,8 +475,7 @@ class MetroProvider extends ChangeNotifier {
           totalTick = 0;
         }
       }
-
-    }else{
+    } else {
       // Determine which beat to play
       if (totalTick == 1) {
         //playBeat(firstBeat, player1);
@@ -506,29 +487,22 @@ class MetroProvider extends ChangeNotifier {
         }
       }
 
-      if(beatIndicator[totalTick].isAccentedBeat == true){
+      if (beatIndicator[totalTick].isAccentedBeat == true) {
         playBeat(firstBeat, player1);
-      }else if(beatIndicator[totalTick].isPlanBeat == true){
+      } else if (beatIndicator[totalTick].isPlanBeat == true) {
         playBeat(secondBeat, player2);
-      } else if(beatIndicator[totalTick].isMutedBeat == true){
-
-      }
+      } else if (beatIndicator[totalTick].isMutedBeat == true) {}
     }
-
-
 
     totalTick += 1;
     notifyListeners();
   }
 
-
-
- // Play the specified beat using the given audio player
+  // Play the specified beat using the given audio player
   Future<void> playBeat(String beat, AudioPlayer player) async {
     player.seek(Duration.zero);
     await player.load();
+    player.setVolume(jhgMetronomeVol);
     player.play();
   }
-
-
 }
