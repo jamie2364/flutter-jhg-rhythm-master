@@ -1,15 +1,14 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_jhg_elements/jhg_elements.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:reg_page/reg_page.dart';
-import 'package:rhythm_master/utils/app_strings.dart';
-import 'package:rhythm_master/utils/app_utils.dart';
 import 'package:rhythm_master/models/sound_model.dart';
 import 'package:rhythm_master/services/local_db.dart';
+import 'package:rhythm_master/utils/app_strings.dart';
+import 'package:rhythm_master/utils/app_utils.dart';
 
 import '../models/beat_indicator_model.dart';
 import '../utils/app_assets.dart';

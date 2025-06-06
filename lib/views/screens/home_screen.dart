@@ -1,19 +1,21 @@
 import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_jhg_elements/jhg_elements.dart';
 import 'package:provider/provider.dart';
 import 'package:reg_page/reg_page.dart';
-import 'package:rhythm_master/utils/app_colors.dart';
-import 'package:rhythm_master/utils/app_strings.dart';
-import 'package:rhythm_master/utils/app_constants.dart';
 import 'package:rhythm_master/main.dart';
 import 'package:rhythm_master/providers/home_provider.dart';
+import 'package:rhythm_master/utils/app_colors.dart';
+import 'package:rhythm_master/utils/app_constants.dart';
+import 'package:rhythm_master/utils/app_strings.dart';
 import 'package:rhythm_master/views/extension/int_extension.dart';
 import 'package:rhythm_master/views/screens/bpm_view.dart';
 import 'package:rhythm_master/views/screens/setting_screen.dart';
 import 'package:rhythm_master/views/screens/speed_view.dart';
+
 import 'metro_view.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -61,8 +63,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   checkToDownloadFile() async {
     final homeController = Provider.of<HomeProvider>(context, listen: false);
     if (!kIsWeb) {
-      downloadingStatus = await StringsDownloadService().isStringsDownloaded(AppStrings.nameOfApp);
-      homeController.setDownloadingStatus(downloadingStatus,this);
+      downloadingStatus = await StringsDownloadService()
+          .isStringsDownloaded(AppStrings.nameOfApp);
+      homeController.setDownloadingStatus(downloadingStatus, this);
       LocalDB.getIsFreePlan().then((value) {
         isFreePlan = value;
         if (value) {
@@ -73,7 +76,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       });
     }
     if (kIsWeb) {
-      homeController.setDownloadingStatus(false,this);
+      homeController.setDownloadingStatus(false, this);
       homeController.getUserNameFromRL();
     }
   }
@@ -122,7 +125,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   onWillPop: onWillPop,
                   child: Scaffold(
                       backgroundColor: controller.isFirstTimeOpen == true
-                          ? Colors.black.withOpacity(.7)
+                          ? Colors.black.withValues(alpha: .7)
                           : null,
                       body: Stack(
                         children: [
@@ -246,7 +249,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                   //     ? SizedBox()
                                   //     :
                                   Expanded(
-                                    child: controller.selectedButton == 0 
+                                    child: controller.selectedButton == 0
                                         ? const MetroView()
                                         : // Now Metronome is first
                                         controller.selectedButton == 1
@@ -262,7 +265,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                             Container(
                               height: double.infinity,
                               width: double.infinity,
-                              color: Colors.black.withOpacity(.4),
+                              color: Colors.black.withValues(alpha: .4),
                             ),
                           // TOOLTIPS
                           if (controller.isFirstTimeOpen == true)
@@ -273,7 +276,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                 padding: EdgeInsets.all(width * .035),
                                 width: width * .7,
                                 decoration: BoxDecoration(
-                                  color: Colors.black.withOpacity(.7),
+                                  color: Colors.black.withValues(alpha: .7),
                                   borderRadius: BorderRadius.circular(16),
                                 ),
                                 child: Column(
@@ -328,7 +331,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 if (!controller.isActive) {
                   showToast(
                       context: context,
-                      message: "Sorry but you do not have an active subscription",
+                      message:
+                          "Sorry but you do not have an active subscription",
                       isError: true);
                 }
               },

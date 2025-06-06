@@ -38,8 +38,8 @@ class AppUtils {
         return Theme(
           data: ThemeData(
             useMaterial3: false,
-            // Set the background color of the AlertDialog
-            dialogBackgroundColor: JHGColors.charcolGray,
+            dialogTheme:
+                DialogThemeData(backgroundColor: JHGColors.charcolGray),
             // Set the text color
           ),
           child: Dialog(
