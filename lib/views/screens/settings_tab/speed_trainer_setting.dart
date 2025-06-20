@@ -156,6 +156,7 @@ class SpeedTrainerSetting extends StatelessWidget {
         ),
         SizedBox(
           height: height * 0.012,
+
         ),
         defaultWid(
           context,

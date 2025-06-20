@@ -22,7 +22,7 @@ class MetroProvider extends ChangeNotifier {
   createBeatIndicatorList() {
     int listLength = totalBeat;
 
-    if (listLength > 6) {
+    if (listLength > 12) {
       setBeatIndicatorState(true);
       return;
     }
@@ -170,6 +170,8 @@ class MetroProvider extends ChangeNotifier {
     customBeatValue = value;
     notifyListeners();
     getBeatsDuration(value, selectedButton);
+
+    createBeatIndicatorList();
     if (isPlaying) {
       setTimer(ticker);
     }

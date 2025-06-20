@@ -139,7 +139,7 @@ class _MetroViewState extends State<MetroView> with TickerProviderStateMixin {
                                                             .paddingOnly(
                                                                 top: 8,
                                                                 right: 8,
-                                                                bottom: 5)
+                                                                bottom: 0)
                                                             .align(Alignment
                                                                 .topRight)
                                                         : SizedBox(),
@@ -392,7 +392,7 @@ class _MetroViewState extends State<MetroView> with TickerProviderStateMixin {
                                                 },
                                                 child: Padding(
                                                   padding: EdgeInsets.symmetric(
-                                                      vertical: height * 0.014),
+                                                      vertical: controller.beatIndicator.length>6?height * 0.005:height * 0.014),
                                                   child: Container(
                                                     height: height * 0.022,
                                                     width: height * 0.022,
