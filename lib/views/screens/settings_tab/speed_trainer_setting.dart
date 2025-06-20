@@ -175,7 +175,7 @@ class SpeedTrainerSetting extends StatelessWidget {
 
   Row defaultWid(context, String title, int initialValue,
       {required dynamic Function(int) onChanged}) {
-    double width = MediaQuery.of(context).size.width * 0.18;
+    double width = MediaQuery.of(context).size.width * 0.10;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
