@@ -315,7 +315,8 @@ class SpeedProvider extends ChangeNotifier {
   }
 
   void decrementTempo(int interval) {
-    startTempo = adjustTempo(startTempo - interval, 1);
+
+    startTempo = adjustTempo(startTempo - interval, targetTempo);
     bpm = startTempo;
     notifyListeners();
   }
@@ -326,12 +327,16 @@ class SpeedProvider extends ChangeNotifier {
   }
 
   void decrementTargetTempo(int interval) {
-    targetTempo = adjustTempo(targetTempo - interval, 1);
+
+    targetTempo = adjustTempo(targetTempo - interval, 300);
+
+
     notifyListeners();
   }
 
 // Helper function to ensure tempo stays within a valid range
   double adjustTempo(double newTempo, double limit) {
+
     if (newTempo > limit) {
       return limit;
     } else if (newTempo < 1) {
