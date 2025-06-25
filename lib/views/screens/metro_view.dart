@@ -485,6 +485,7 @@ class _MetroViewState extends State<MetroView> with TickerProviderStateMixin {
                       width: 100,
                       child: Center(
                           child: JHGVolumeIndicator(
+                            enabled: true,
                         volBottom: 88,
                         volRight: 46,
                       )))
@@ -497,6 +498,7 @@ class _MetroViewState extends State<MetroView> with TickerProviderStateMixin {
                           width: 100,
                           child: Center(
                               child: JHGVolumeIndicator(
+                                enabled: true,
                             volBottom: 98,
                             volRight: 62,
                           ))))),
