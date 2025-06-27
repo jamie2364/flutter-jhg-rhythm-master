@@ -392,7 +392,12 @@ class _MetroViewState extends State<MetroView> with TickerProviderStateMixin {
                                                 },
                                                 child: Padding(
                                                   padding: EdgeInsets.symmetric(
-                                                      vertical: controller.beatIndicator.length>6?height * 0.005:height * 0.014),
+                                                      vertical: controller
+                                                                  .beatIndicator
+                                                                  .length >
+                                                              6
+                                                          ? height * 0.005
+                                                          : height * 0.014),
                                                   child: Container(
                                                     height: height * 0.022,
                                                     width: height * 0.022,
@@ -472,36 +477,51 @@ class _MetroViewState extends State<MetroView> with TickerProviderStateMixin {
                     onChanged: (val) {
                       controller.startStop(this);
                     }),
+                // trailingWidget: SizedBox(
+                //   width: 100,
+                //   height: 150,
+                //   child: JHGVolumeIndicator(
+                //     enabled: true,
+                //     volBottom: 88,
+                //     volRight: 46,
+                //   ),
+                // ),
               ),
             ],
           ),
           Positioned(
-              right: -15,
-              bottom: -10,
-              child: kIsWeb
-                  ? SizedBox(
+            right: -15,
+            bottom: -5,
+            child: kIsWeb
+                ? SizedBox(
+                    //color: Colors.red,
+                    height: 250,
+                    width: 100,
+                    child: Center(
+                        child: JHGVolumeIndicator(
+                      iconBottom: 35,
+                      enabled: true,
+                      volBottom: 88,
+                      volRight: 46,
+                    )))
+                : Positioned(
+                    right: -50,
+                    bottom: -40,
+                    child: SizedBox(
                       //color: Colors.red,
                       height: 250,
                       width: 100,
                       child: Center(
-                          child: JHGVolumeIndicator(
-                            enabled: true,
-                        volBottom: 88,
-                        volRight: 46,
-                      )))
-                  : Positioned(
-                      right: -50,
-                      bottom: -40,
-                      child: SizedBox(
-                          //color: Colors.red,
-                          height: 250,
-                          width: 100,
-                          child: Center(
-                              child: JHGVolumeIndicator(
-                                enabled: true,
-                            volBottom: 98,
-                            volRight: 62,
-                          ))))),
+                        child: JHGVolumeIndicator(
+                          iconBottom: 35,
+                          enabled: true,
+                          volBottom: 98,
+                          volRight: 62,
+                        ),
+                      ),
+                    ),
+                  ),
+          ),
         ],
       );
     });
