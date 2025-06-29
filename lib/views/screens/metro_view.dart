@@ -45,6 +45,7 @@ class _MetroViewState extends State<MetroView> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     //metroProvider?.init();
     final height = MediaQuery.of(context).size.height;
+    final width = MediaQuery.of(context).size.width;
     final metroWidth = 235.0.w;
     final metroHeight = kIsWeb ? 290.0.h : 308.0.h;
     return Consumer<MetroProvider>(builder: (context, controller, child) {
@@ -490,8 +491,8 @@ class _MetroViewState extends State<MetroView> with TickerProviderStateMixin {
                         volRight: 46,
                       )))
                   : Positioned(
-                      right: -50,
-                      bottom: -40,
+                      left: width * 0.73,
+                      top: height*0.5359,
                       child: SizedBox(
                           //color: Colors.red,
                           height: 250,
