@@ -490,11 +490,11 @@ class _MetroViewState extends State<MetroView> with TickerProviderStateMixin {
               ),
             ],
           ),
-          Positioned(
+            kIsWeb ?
+                  Positioned(
             right: -15,
             bottom: -5,
-            child: kIsWeb
-                ? SizedBox(
+            child: SizedBox(
                     //color: Colors.red,
                     height: 250,
                     width: 100,
@@ -504,25 +504,23 @@ class _MetroViewState extends State<MetroView> with TickerProviderStateMixin {
                       enabled: true,
                       volBottom: 88,
                       volRight: 46,
-                    )))
+                    ))))
                 : Positioned(
-                  left: width * 0.73,
-                  top: height*0.5100 ,
-                    child: SizedBox(
-                      //color: Colors.red,
+                  right: -35,
+                  bottom:  -20 ,
+                    child: Container(
                       height: 250,
-                      width: 100,
+                      width: 78,
                       child: Center(
-                        child: JHGVolumeIndicator(
+                        child: JHGVolumeIndicator(    
                           iconBottom: 35,
                           enabled: true,
                           volBottom: 98,
-                          volRight: 62,
+                          volRight: 54,
                         ),
                       ),
                     ),
                   ),
-          ),
         ],
       );
     });
