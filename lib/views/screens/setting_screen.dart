@@ -45,7 +45,8 @@ class _SettingScreenState extends State<SettingScreen> {
       appStoreId: AppStrings.appStoreId,
       appName: AppStrings.appName,
       bodyAppBar: JHGAppBar(
-        
+        rowHeight: JHGAppBar.height,
+        crossAxisAlignment: CrossAxisAlignment.center,
         title: AppStrings.setting.toText(textStyle: JHGTextStyles.smlabelStyle),
         trailingWidget: kIsWeb
             ? null
