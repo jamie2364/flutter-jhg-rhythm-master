@@ -81,8 +81,7 @@ class _MetroViewState extends State<MetroView> with TickerProviderStateMixin {
                                     physics: AlwaysScrollableScrollPhysics(),
                                     padding: EdgeInsets.zero,
                                     primary: true,
-                                    itemCount:
-                                        controller.tapButtonList.length + 1,
+                                    itemCount: controller.tapButtonList.length + 1,
                                     shrinkWrap: true,
                                     scrollDirection: Axis.vertical,
                                     itemBuilder: (context, index) {
@@ -91,8 +90,7 @@ class _MetroViewState extends State<MetroView> with TickerProviderStateMixin {
                                           child: GestureDetector(
                                             onTap: () async {
                                               if (index ==
-                                                  controller
-                                                      .tapButtonList.length) {
+                                                  controller.tapButtonList.length) {
                                                 controller
                                                     .setMetronomeDefaultValue();
                                                 customSelectionBottomSheet(
@@ -168,7 +166,7 @@ class _MetroViewState extends State<MetroView> with TickerProviderStateMixin {
                                                       style: JHGTextStyles
                                                           .subLabelStyle
                                                           .copyWith(
-                                                        color: AppColors
+                                                          color: AppColors
                                                             .whitePrimary,
                                                         fontSize: (index ==
                                                                     controller
