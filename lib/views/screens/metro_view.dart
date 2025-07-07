@@ -45,7 +45,6 @@ class _MetroViewState extends State<MetroView> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     //metroProvider?.init();
     final height = MediaQuery.of(context).size.height;
-    final width = MediaQuery.of(context).size.width;
     final metroWidth = 235.0.w;
     final metroHeight = kIsWeb ? 290.0.h : 308.0.h;
     return Consumer<MetroProvider>(builder: (context, controller, child) {
@@ -81,7 +80,8 @@ class _MetroViewState extends State<MetroView> with TickerProviderStateMixin {
                                     physics: AlwaysScrollableScrollPhysics(),
                                     padding: EdgeInsets.zero,
                                     primary: true,
-                                    itemCount: controller.tapButtonList.length + 1,
+                                    itemCount:
+                                        controller.tapButtonList.length + 1,
                                     shrinkWrap: true,
                                     scrollDirection: Axis.vertical,
                                     itemBuilder: (context, index) {
@@ -90,7 +90,8 @@ class _MetroViewState extends State<MetroView> with TickerProviderStateMixin {
                                           child: GestureDetector(
                                             onTap: () async {
                                               if (index ==
-                                                  controller.tapButtonList.length) {
+                                                  controller
+                                                      .tapButtonList.length) {
                                                 controller
                                                     .setMetronomeDefaultValue();
                                                 customSelectionBottomSheet(
@@ -166,7 +167,7 @@ class _MetroViewState extends State<MetroView> with TickerProviderStateMixin {
                                                       style: JHGTextStyles
                                                           .subLabelStyle
                                                           .copyWith(
-                                                          color: AppColors
+                                                        color: AppColors
                                                             .whitePrimary,
                                                         fontSize: (index ==
                                                                     controller
@@ -465,7 +466,7 @@ class _MetroViewState extends State<MetroView> with TickerProviderStateMixin {
               JHGAppBar(
                 isBottom: true,
                 isResponsive: true,
-                // crossAxisAlignment: CrossAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 leadingWidget: JHGResetBtn(
                     enabled: true,
                     onTap: () {
@@ -476,49 +477,38 @@ class _MetroViewState extends State<MetroView> with TickerProviderStateMixin {
                     onChanged: (val) {
                       controller.startStop(this);
                     }),
-                // trailingWidget: SizedBox(
-                //   width: 100,
-                //   height: 150,
-                //   child: JHGVolumeIndicator(
-                //     enabled: true,
-                //     volBottom: 88,
-                //     volRight: 46,
-                //   ),
-                // ),
               ),
             ],
           ),
-            kIsWeb ?
-                  Positioned(
-            right: -15,
-            bottom: -5,
-            child: SizedBox(
-                    //color: Colors.red,
+          kIsWeb
+              ? Positioned(
+                  right: -15,
+                  bottom: 18.5,
+                  child: SizedBox(
+                      //color: Colors.red,
+                      height: 250,
+                      width: 100,
+                      child: Center(
+                          child: JHGVolumeIndicator(
+                        iconBottom: 35,
+                        enabled: true,
+                        volBottom: 88,
+                        volRight: 46,
+                      ))))
+              : Positioned(
+                  right: -35,
+                  bottom: 0,
+                  child: Container(
                     height: 250,
-                    width: 100,
-                    child: Center(
-                        child: JHGVolumeIndicator(
+                    width: 78,
+                    child: JHGVolumeIndicator(
                       iconBottom: 35,
                       enabled: true,
-                      volBottom: 88,
-                      volRight: 46,
-                    ))))
-                : Positioned(
-                  right: -35,
-                  bottom:  -20 ,
-                    child: Container(
-                      height: 250,
-                      width: 78,
-                      child: Center(
-                        child: JHGVolumeIndicator(    
-                          iconBottom: 35,
-                          enabled: true,
-                          volBottom: 98,
-                          volRight: 54,
-                        ),
-                      ),
+                      volBottom: 98,
+                      volRight: 54,
                     ),
                   ),
+                ),
         ],
       );
     });
