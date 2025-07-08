@@ -45,7 +45,7 @@ class _MetroViewState extends State<MetroView> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     //metroProvider?.init();
     final height = MediaQuery.of(context).size.height;
-    final metroWidth = 235.0.w;
+    final metroWidth = 220.0.w;
     final metroHeight = kIsWeb ? 290.0.h : 308.0.h;
     return Consumer<MetroProvider>(builder: (context, controller, child) {
       final bpm = controller.bpm;

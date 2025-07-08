@@ -159,7 +159,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                   Container(
                                     //color: Colors.red,
                                     constraints: BoxConstraints(
-                                        maxWidth: kIsWeb ? 380.0.w : 375.0.w),
+                                        maxWidth: kIsWeb ? 380.0.w : 390.0.w),
                                     height: height * 0.057,
                                     child: Row(
                                         mainAxisAlignment:
