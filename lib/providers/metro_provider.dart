@@ -391,7 +391,7 @@ class MetroProvider extends ChangeNotifier {
       await player2.setVolume(1.0);
     }
     if (beatIndicator.isEmpty) return;
-    if (totalBeat > 6) {
+    if (totalBeat > 12) {
       if (totalTick == 1) {
         await playBeat(firstBeat, player1);
       } else if (totalTick <= totalBeat) {
