@@ -409,6 +409,7 @@ class MetroProvider extends ChangeNotifier {
           totalTick = 0;
         }
       }
+
       if (beatIndicator[totalTick].isAccentedBeat) {
         await playBeat(firstBeat, player1);
       } else if (beatIndicator[totalTick].isPlanBeat) {
@@ -416,7 +417,12 @@ class MetroProvider extends ChangeNotifier {
       }
       // Muted beat: do nothing
     }
-    totalTick += 1;
+    if(beatIndicator.length>totalTick){
+
+      totalTick += 1;
+    }else{
+      totalTick=beatIndicator.length-1;
+    }
     notifyListeners();
   }
 
