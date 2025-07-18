@@ -114,13 +114,13 @@ class MetroProvider extends ChangeNotifier {
 
   /// Preloads metronome sounds for smooth playback
   Future<void> preloadSounds() async {
-    await Future.wait([
+    Future.wait([
       player1.setVolume(0),
       player2.setVolume(0),
     ]);
     final directory1 = !kIsWeb ? Utils.getAsset(firstBeat) : AppUtils.setWebAsset(firstBeat);
     final directory2 = !kIsWeb ? Utils.getAsset(secondBeat) : AppUtils.setWebAsset(secondBeat);
-    await Future.wait([
+     Future.wait([
       player1.setFilePath(directory1.path, preload: true),
       player2.setFilePath(directory2.path, preload: true),
     ]);
@@ -387,15 +387,17 @@ class MetroProvider extends ChangeNotifier {
   Future<void> playSound() async {
     // Ensure players have the correct volume
     if (player1.volume == 0 || player2.volume == 0) {
-      await player1.setVolume(1.0);
-      await player2.setVolume(1.0);
+      Future.wait([
+       player1.setVolume(1.0),
+       player2.setVolume(1.0)
+      ]);
     }
     if (beatIndicator.isEmpty) return;
     if (totalBeat > 12) {
       if (totalTick == 1) {
-        await playBeat(firstBeat, player1);
+         playBeat(firstBeat, player1);
       } else if (totalTick <= totalBeat) {
-        await playBeat(secondBeat, player2);
+         playBeat(secondBeat, player2);
         if (totalTick == totalBeat) {
           totalTick = 0;
         }
@@ -411,9 +413,9 @@ class MetroProvider extends ChangeNotifier {
       }
 
       if (beatIndicator[totalTick].isAccentedBeat) {
-        await playBeat(firstBeat, player1);
+         playBeat(firstBeat, player1);
       } else if (beatIndicator[totalTick].isPlanBeat) {
-        await playBeat(secondBeat, player2);
+         playBeat(secondBeat, player2);
       }
       // Muted beat: do nothing
     }
@@ -428,9 +430,11 @@ class MetroProvider extends ChangeNotifier {
 
   /// Plays a specific beat sound using the given player
   Future<void> playBeat(String beat, AudioPlayer player) async {
-    await player.seek(Duration.zero);
-    await player.load();
-    await player.setVolume(jhgMetronomeVol);
-    await player.play();
+    Future.wait([
+     player.seek(Duration.zero),
+     player.load(),
+     player.setVolume(jhgMetronomeVol),
+     player.play(),
+    ]);
   }
 }
