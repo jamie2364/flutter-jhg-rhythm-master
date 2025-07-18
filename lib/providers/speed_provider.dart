@@ -7,8 +7,8 @@ import 'package:rhythm_master/services/local_db.dart';
 import 'package:rhythm_master/utils/app_strings.dart';
 import 'package:rhythm_master/utils/app_utils.dart';
 import '../utils/app_assets.dart';
-import '../utils/web_audio_player.dart';
-
+import '../utils/web_audio_player.dart'
+    if (dart.library.js) '../utils/web_audio_player_web.dart';
 /// SpeedProvider manages the functionality of a speed trainer,
 /// including BPM, intervals, and audio playback for tempo training.
 class SpeedProvider extends ChangeNotifier {
@@ -281,33 +281,11 @@ class SpeedProvider extends ChangeNotifier {
     }
   }
 
-  /// Plays the accented beat sound
-  // Future<void> playBeat1() async {
-  //   await player1.seek(Duration.zero);
-  //   await player1.load();
-  //   await player1.play();
-  // }
-
-  /// Plays the regular beat sound
-  // Future<void> playBeat2() async {
-  //   Future.wait([
-  //    player2.seek(Duration.zero),
-  //    player2.load(),
-  //    player2.play(),
-  //   ]);
-  // }
-  //
   playBeat(AudioPlayer player){
-    Future.wait([
-      player.seek(Duration.zero),
-      player.load(),
-      player.play(),
-    ]);
-
     if (kIsWeb) {
       final beat = player == player1 ? firstBeat : secondBeat;
       playWebMetronomeSound(beat, 1.0);
-    } else {  
+    } else {
       Future.wait([
         player.seek(Duration.zero),
         player.load(),
