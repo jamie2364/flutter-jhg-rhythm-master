@@ -7,6 +7,7 @@ import 'package:rhythm_master/services/local_db.dart';
 import 'package:rhythm_master/utils/app_strings.dart';
 import 'package:rhythm_master/utils/app_utils.dart';
 import '../utils/app_assets.dart';
+import '../utils/web_audio_player.dart';
 
 /// SpeedProvider manages the functionality of a speed trainer,
 /// including BPM, intervals, and audio playback for tempo training.
@@ -22,7 +23,7 @@ class SpeedProvider extends ChangeNotifier {
   final AudioPlayer player2 = AudioPlayer();
 
   // Timer for scheduling beat playback
-  Timer? _timer;  
+  Timer? _timer;
 
   // Start tempo and its range
   double startTempo = 120;
@@ -302,6 +303,17 @@ class SpeedProvider extends ChangeNotifier {
       player.load(),
       player.play(),
     ]);
+
+    if (kIsWeb) {
+      final beat = player == player1 ? firstBeat : secondBeat;
+      playWebMetronomeSound(beat, 1.0);
+    } else {  
+      Future.wait([
+        player.seek(Duration.zero),
+        player.load(),
+        player.play(),
+      ]);
+    }
   }
 
   /// Increments the start tempo by [interval], clamped to targetTempo

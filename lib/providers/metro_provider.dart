@@ -12,6 +12,8 @@ import 'package:rhythm_master/utils/app_utils.dart';
 
 import '../models/beat_indicator_model.dart';
 import '../utils/app_assets.dart';
+import '../utils/web_audio_player.dart'
+    if (dart.library.js) '../utils/web_audio_player_web.dart';
 
 /// MetroProvider manages metronome state, BPM, beats, and sound playback.
 class MetroProvider extends ChangeNotifier {
@@ -430,11 +432,15 @@ class MetroProvider extends ChangeNotifier {
 
   /// Plays a specific beat sound using the given player
   Future<void> playBeat(String beat, AudioPlayer player) async {
-    Future.wait([
-     player.seek(Duration.zero),
-     player.load(),
-     player.setVolume(jhgMetronomeVol),
-     player.play(),
-    ]);
+    if (kIsWeb) {
+      playWebMetronomeSound(beat, jhgMetronomeVol);
+    } else {
+      await Future.wait([
+        player.seek(Duration.zero),
+        player.load(),
+        player.setVolume(jhgMetronomeVol),
+        player.play(),
+      ]);
+    }
   }
 }
