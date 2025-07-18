@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
-import 'package:just_audio/just_audio.dart';
+import 'package:flutter_sound/flutter_sound.dart';
 import 'package:reg_page/reg_page.dart';
 import 'package:rhythm_master/models/sound_model.dart';
 import 'package:rhythm_master/services/local_db.dart';
@@ -18,8 +18,8 @@ class SpeedProvider extends ChangeNotifier {
   double bpm = 120;
 
   // Audio players for accented and regular beats
-  final AudioPlayer player1 = AudioPlayer();
-  final AudioPlayer player2 = AudioPlayer();
+  final FlutterSoundPlayer player1 = FlutterSoundPlayer();
+  final FlutterSoundPlayer player2 = FlutterSoundPlayer();
 
   // Timer for scheduling beat playback
   Timer? _timer;
@@ -72,16 +72,7 @@ class SpeedProvider extends ChangeNotifier {
 
   /// Preloads metronome sounds for smooth playback
   Future<void> preloadSounds() async {
-    await Future.wait([
-      player1.setVolume(0),
-      player2.setVolume(0),
-    ]);
-    final directory1 = !kIsWeb ? Utils.getAsset(firstBeat) : AppUtils.setWebAsset(firstBeat);
-    final directory2 = !kIsWeb ? Utils.getAsset(secondBeat) : AppUtils.setWebAsset(secondBeat);
-    await Future.wait([
-      player1.setFilePath(directory1.path, preload: true),
-      player2.setFilePath(directory2.path, preload: true),
-    ]);
+    // flutter_sound does not require explicit preloading for assets
   }
 
   /// Loads default values for the speed trainer from storage
@@ -246,14 +237,9 @@ class SpeedProvider extends ChangeNotifier {
 
   /// Plays the appropriate sound for the current tick and manages BPM increase
   Future<void> playSound() async {
-    if (player1.volume == 0 || player2.volume == 0) {
-      await player1.setVolume(1.0);
-      await player2.setVolume(1.0);
-    }
     barCounter++;
     totalTick++;
     if (totalTick == 1) {
-      // Check if it's time to increase BPM
       final bool shouldIncrease = firstTime
           ? barCounter - 1 == bar * totalBeats
           : barCounter == bar * totalBeats;
@@ -264,31 +250,28 @@ class SpeedProvider extends ChangeNotifier {
         notifyListeners();
         setTimer();
       }
-      // If we've reached the target tempo, stop increasing
       if (bpm >= targetTempo + bar * interval) return;
-      playBeat1();
+      await playBeat1();
     } else {
       if (totalTick < totalBeats) {
-        playBeat2();
+        await playBeat2();
       } else {
         totalTick = 0;
-        playBeat2();
+        await playBeat2();
       }
     }
   }
 
   /// Plays the accented beat sound
   Future<void> playBeat1() async {
-    await player1.seek(Duration.zero);
-    await player1.load();
-    await player1.play();
+    if (!player1.isOpen()) await player1.openPlayer();
+    await player1.startPlayer(fromURI: firstBeat, codec: Codec.mp3);
   }
 
   /// Plays the regular beat sound
   Future<void> playBeat2() async {
-    await player2.seek(Duration.zero);
-    await player2.load();
-    await player2.play();
+    if (!player2.isOpen()) await player2.openPlayer();
+    await player2.startPlayer(fromURI: secondBeat, codec: Codec.mp3);
   }
 
   /// Increments the start tempo by [interval], clamped to targetTempo
