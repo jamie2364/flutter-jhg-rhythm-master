@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_jhg_elements/jhg_elements.dart';
-import 'package:flutter_sound/flutter_sound.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:reg_page/reg_page.dart';
 import 'package:rhythm_master/models/sound_model.dart';
 import 'package:rhythm_master/services/local_db.dart';
@@ -83,8 +83,8 @@ class MetroProvider extends ChangeNotifier {
   Animation<double>? animation;
 
   // Audio players for metronome sounds
-  final FlutterSoundPlayer player1 = FlutterSoundPlayer();
-  final FlutterSoundPlayer player2 = FlutterSoundPlayer();
+  final AudioPlayer player1 = AudioPlayer();
+  final AudioPlayer player2 = AudioPlayer();
 
   int? selectedIndex;
   double timeStamp = 0;
@@ -114,7 +114,16 @@ class MetroProvider extends ChangeNotifier {
 
   /// Preloads metronome sounds for smooth playback
   Future<void> preloadSounds() async {
-    // flutter_sound does not require explicit preloading for assets
+    await Future.wait([
+      player1.setVolume(0),
+      player2.setVolume(0),
+    ]);
+    final directory1 = !kIsWeb ? Utils.getAsset(firstBeat) : AppUtils.setWebAsset(firstBeat);
+    final directory2 = !kIsWeb ? Utils.getAsset(secondBeat) : AppUtils.setWebAsset(secondBeat);
+    await Future.wait([
+      player1.setFilePath(directory1.path, preload: true),
+      player2.setFilePath(directory2.path, preload: true),
+    ]);
   }
 
   /// Increments numerator (max 96)
@@ -376,6 +385,11 @@ class MetroProvider extends ChangeNotifier {
 
   /// Plays the appropriate sound for the current tick
   Future<void> playSound() async {
+    // Ensure players have the correct volume
+    if (player1.volume == 0 || player2.volume == 0) {
+      await player1.setVolume(1.0);
+      await player2.setVolume(1.0);
+    }
     if (beatIndicator.isEmpty) return;
     if (totalBeat > 12) {
       if (totalTick == 1) {
@@ -395,6 +409,7 @@ class MetroProvider extends ChangeNotifier {
           totalTick = 0;
         }
       }
+
       if (beatIndicator[totalTick].isAccentedBeat) {
         await playBeat(firstBeat, player1);
       } else if (beatIndicator[totalTick].isPlanBeat) {
@@ -403,6 +418,7 @@ class MetroProvider extends ChangeNotifier {
       // Muted beat: do nothing
     }
     if(beatIndicator.length>totalTick){
+
       totalTick += 1;
     }else{
       totalTick=beatIndicator.length-1;
@@ -411,8 +427,10 @@ class MetroProvider extends ChangeNotifier {
   }
 
   /// Plays a specific beat sound using the given player
-  Future<void> playBeat(String beat, FlutterSoundPlayer player) async {
-    if (!player.isOpen()) await player.openPlayer();
-    await player.startPlayer(fromURI: beat, codec: Codec.mp3);
+  Future<void> playBeat(String beat, AudioPlayer player) async {
+    await player.seek(Duration.zero);
+    await player.load();
+    await player.setVolume(jhgMetronomeVol);
+    await player.play();
   }
 }
