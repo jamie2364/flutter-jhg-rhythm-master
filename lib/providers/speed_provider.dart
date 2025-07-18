@@ -210,66 +210,72 @@ class SpeedProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Starts or stops the speed trainer
+  /// Initializes and preloads both audio players once
+  Future<void> preloadBeats() async {
+    await Future.wait([
+      player1.setFilePath(firstBeat, preload: true),
+      player2.setFilePath(secondBeat, preload: true),
+    ]);
+  }
+
+  /// Called once to preload before playback
   void startStop() {
     totalTick = 0;
     barCounter = 0;
     firstTime = true;
+
     if (isPlaying) {
       _timer?.cancel();
     } else {
-      setTimer();
+      preloadBeats().then((_) => setTimer());
     }
     isPlaying = !isPlaying;
     notifyListeners();
   }
 
-  /// Sets the timer for beat playback and BPM increase
   void setTimer() {
     _timer?.cancel();
     _timer = Timer.periodic(
-      Duration(milliseconds: (timeStamp / bpm).round()),
-      (Timer timer) async {
-        if (targetTempo + interval > bpm) {
-           playSound();
+      Duration(milliseconds: (60000 / bpm).round()), // more accurate than timeStamp/bpm
+          (Timer timer) {
+        if (bpm <= targetTempo + interval) {
+          playSound();
         } else {
-          _timer?.cancel();
-          totalTick = 0;
-          barCounter = 0;
-          isPlaying = false;
-          firstTime = true;
-          bpm = targetTempo;
-          notifyListeners();
+          stopPlayback();
         }
       },
     );
   }
 
-  /// Plays the appropriate sound for the current tick and manages BPM increase
-  Future<void> playSound() async {
-    if (player1.volume == 0 || player2.volume == 0) {
-      Future.wait([
-       player1.setVolume(1.0),
-       player2.setVolume(1.0),
-      ]);
+  void stopPlayback() {
+    _timer?.cancel();
+    totalTick = 0;
+    barCounter = 0;
+    isPlaying = false;
+    firstTime = true;
+    bpm = targetTempo;
+    notifyListeners();
+  }
 
-    }
+  Future<void> playSound() async {
     barCounter++;
     totalTick++;
+
+    final shouldIncreaseBPM = firstTime
+        ? barCounter - 1 == bar * totalBeats
+        : barCounter == bar * totalBeats;
+
+    if (shouldIncreaseBPM) {
+      bpm += interval;
+      barCounter = 0;
+      firstTime = false;
+      notifyListeners();
+      setTimer();
+    }
+
+    if (bpm >= targetTempo + bar * interval) return;
+
     if (totalTick == 1) {
-      // Check if it's time to increase BPM
-      final bool shouldIncrease = firstTime
-          ? barCounter - 1 == bar * totalBeats
-          : barCounter == bar * totalBeats;
-      if (shouldIncrease) {
-        bpm += interval;
-        barCounter = 0;
-        firstTime = false;
-        notifyListeners();
-        setTimer();
-      }
-      // If we've reached the target tempo, stop increasing
-      if (bpm >= targetTempo + bar * interval) return;
       playBeat(player1);
     } else {
       if (totalTick < totalBeats) {
@@ -281,18 +287,16 @@ class SpeedProvider extends ChangeNotifier {
     }
   }
 
-  playBeat(AudioPlayer player){
+  void playBeat(AudioPlayer player) {
     if (kIsWeb) {
       final beat = player == player1 ? firstBeat : secondBeat;
       playWebMetronomeSound(beat, 1.0);
     } else {
-      Future.wait([
-        player.seek(Duration.zero),
-        player.load(),
-        player.play(),
-      ]);
+      player.seek(Duration.zero);
+      player.play(); // Avoid calling load()
     }
   }
+
 
   /// Increments the start tempo by [interval], clamped to targetTempo
   void incrementTempo(int interval) {
