@@ -210,13 +210,13 @@ class SpeedProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Initializes and preloads both audio players once
-  Future<void> preloadBeats() async {
-    await Future.wait([
-      player1.setFilePath(firstBeat, preload: true),
-      player2.setFilePath(secondBeat, preload: true),
-    ]);
-  }
+  // /// Initializes and preloads both audio players once
+  // Future<void> preloadBeats() async {
+  //    Future.wait([
+  //     player1.setFilePath(firstBeat, preload: true),
+  //     player2.setFilePath(secondBeat, preload: true),
+  //   ]);
+  // }
 
   /// Called once to preload before playback
   void startStop() {
@@ -227,7 +227,7 @@ class SpeedProvider extends ChangeNotifier {
     if (isPlaying) {
       _timer?.cancel();
     } else {
-      preloadBeats().then((_) => setTimer());
+     setTimer();
     }
     isPlaying = !isPlaying;
     notifyListeners();
@@ -287,13 +287,17 @@ class SpeedProvider extends ChangeNotifier {
     }
   }
 
-  void playBeat(AudioPlayer player) {
+  Future<void> playBeat(AudioPlayer player) async {
     if (kIsWeb) {
       final beat = player == player1 ? firstBeat : secondBeat;
       playWebMetronomeSound(beat, 1.0);
     } else {
-      player.seek(Duration.zero);
-      player.play(); // Avoid calling load()
+      await Future.wait([
+        player.seek(Duration.zero),
+        player.load(),
+        player.setVolume(1),
+        player.play(),
+      ]); //
     }
   }
 

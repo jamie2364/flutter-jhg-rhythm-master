@@ -436,10 +436,9 @@ class MetroProvider extends ChangeNotifier {
       playWebMetronomeSound(beat, jhgMetronomeVol);
     } else {
       await Future.wait([
-        player.seek(Duration.zero),
-        player.load(),
-        player.setVolume(jhgMetronomeVol),
-        player.play(),
+       player.seek(Duration.zero),
+       player.load(),
+       player.play(),
       ]);
     }
   }
