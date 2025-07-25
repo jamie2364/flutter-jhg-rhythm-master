@@ -1,15 +1,14 @@
 import 'dart:async';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_jhg_elements/jhg_elements.dart';
-import 'package:just_audio/just_audio.dart';
+import 'package:audioplayers/audioplayers.dart';
+import 'dart:io';
 import 'package:reg_page/reg_page.dart';
 import 'package:rhythm_master/models/sound_model.dart';
 import 'package:rhythm_master/services/local_db.dart';
 import 'package:rhythm_master/utils/app_strings.dart';
 import 'package:rhythm_master/utils/app_utils.dart';
-
 import '../models/beat_indicator_model.dart';
 import '../utils/app_assets.dart';
 import '../utils/web_audio_player.dart'
@@ -116,17 +115,13 @@ class MetroProvider extends ChangeNotifier {
 
   /// Preloads metronome sounds for smooth playback
   Future<void> preloadSounds() async {
-    Future.wait([
-      player1.setVolume(0),
-      player2.setVolume(0),
-    ]);
-    final directory1 = !kIsWeb ? Utils.getAsset(firstBeat) : AppUtils.setWebAsset(firstBeat);
-    final directory2 = !kIsWeb ? Utils.getAsset(secondBeat) : AppUtils.setWebAsset(secondBeat);
-     Future.wait([
-      player1.setFilePath(directory1.path, preload: true),
-      player2.setFilePath(directory2.path, preload: true),
+    // No explicit preload needed for audioplayers, but you can set volume to 1.0
+    await Future.wait([
+      player1.setVolume(1.0),
+      player2.setVolume(1.0),
     ]);
   }
+
 
   /// Increments numerator (max 96)
   void incrementBeatNumerator() {
@@ -389,7 +384,7 @@ class MetroProvider extends ChangeNotifier {
   Future<void> playSound() async {
     // Ensure players have the correct volume
     if (player1.volume == 0 || player2.volume == 0) {
-      Future.wait([
+      await Future.wait([
        player1.setVolume(1.0),
        player2.setVolume(1.0)
       ]);
@@ -435,11 +430,13 @@ class MetroProvider extends ChangeNotifier {
     if (kIsWeb) {
       playWebMetronomeSound(beat, jhgMetronomeVol);
     } else {
-      await Future.wait([
-       player.seek(Duration.zero),
-       player.load(),
-       player.play(),
-      ]);
+      await player.stop();
+      final file = Utils.getAsset(beat);
+      if (file.existsSync()) {
+        await player.play(DeviceFileSource(file.path), volume: 1.0);
+      } else {
+        await player.play(AssetSource(beat), volume: 1.0);
+      }
     }
   }
 }
