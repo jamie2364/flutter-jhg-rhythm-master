@@ -430,7 +430,7 @@ class MetroProvider extends ChangeNotifier {
     if (kIsWeb) {
       playWebMetronomeSound(beat, jhgMetronomeVol);
     } else {
-      await player.stop();
+      //await player.stop();
       final file = Utils.getAsset(beat);
       if (file.existsSync()) {
         await player.play(DeviceFileSource(file.path), volume: 1.0);
