@@ -102,4 +102,5 @@ flutter:
   assets:
     - assets/images/
     - assets/audio/
+    - web/assets/audio/
 

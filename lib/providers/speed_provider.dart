@@ -5,11 +5,9 @@ import 'package:reg_page/reg_page.dart';
 import 'package:rhythm_master/models/sound_model.dart';
 import 'package:rhythm_master/services/local_db.dart';
 import 'package:rhythm_master/utils/app_strings.dart';
-import 'package:rhythm_master/utils/app_utils.dart';
 import '../utils/app_assets.dart';
 import '../utils/web_audio_player.dart'
     if (dart.library.js) '../utils/web_audio_player_web.dart';
-import 'dart:io';
 /// SpeedProvider manages the functionality of a speed trainer,
 /// including BPM, intervals, and audio playback for tempo training.
 class SpeedProvider extends ChangeNotifier {
