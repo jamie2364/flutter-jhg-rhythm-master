@@ -437,16 +437,16 @@ class MetroProvider extends ChangeNotifier {
     final file = Utils.getAsset(beat);
     if (kIsWeb) {
       var logic1 = file.path.replaceAll('null', 'web');
-      await player.play(UrlSource(logic1), volume: 1.0);
+      await player.play(UrlSource(logic1));
       await player.setReleaseMode(ReleaseMode.stop);
       // playWebMetronomeSound(beat, jhgMetronomeVol);
     } else {
       //await player.stop();
       final file = Utils.getAsset(beat);
       if (file.existsSync()) {
-        await player.play(DeviceFileSource(file.path), volume: 1.0);
+        await player.play(DeviceFileSource(file.path));
       } else {
-        await player.play(AssetSource(beat), volume: 1.0);
+        await player.play(AssetSource(beat));
       }
       await player.setReleaseMode(ReleaseMode.stop);
     }

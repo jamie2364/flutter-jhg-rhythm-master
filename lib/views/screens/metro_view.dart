@@ -485,16 +485,21 @@ class _MetroViewState extends State<MetroView> with TickerProviderStateMixin {
                   right: -15,
                   bottom: 18.5,
                   child: SizedBox(
-                      //color: Colors.red,
-                      height: 250,
-                      width: 100,
-                      child: Center(
-                          child: JHGVolumeIndicator(
+                    //color: Colors.red,
+                    height: 250,
+                    width: 100,
+                    child: Center(
+                      child: JHGVolumeIndicator(
+                        onChange: (val){
+                          print("LLLLLLZZ : $val");},
                         iconBottom: 35,
                         enabled: true,
                         volBottom: 88,
                         volRight: 46,
-                      ))))
+                      ),
+                    ),
+                  ),
+                )
               : Positioned(
                   right: -35,
                   bottom: 0,
@@ -502,6 +507,11 @@ class _MetroViewState extends State<MetroView> with TickerProviderStateMixin {
                     height: 250,
                     width: 78,
                     child: JHGVolumeIndicator(
+                      onChange: (val){
+                        print("LLLLLL : $val");
+                        controller.player1.setVolume(val/100);
+                        controller.player2.setVolume(val/100);
+                      },
                       iconBottom: 35,
                       enabled: true,
                       volBottom: 98,
