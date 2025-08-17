@@ -135,63 +135,65 @@ class SpeedTrainerSetting extends StatelessWidget {
         SizedBox(
           height: height * 0.02,
         ),
-        defaultWid(
-          context,
+
+        JHGHeadAndSubHWidget(
           AppStrings.defaultBars,
-          speedController.defaultBar,
-          onChanged: (value) {
-            speedController.onChangedDefaultBar(value);
-          },
+          margin: EdgeInsets.only(
+            bottom: JHGHeadAndSubHWidget.bottom,
+            left: 10,
+            right: 10,
+          ),
+          lableStyle: JHGTextStyles.headLabelStyle.copyWith(fontSize: 18),
+          actions: [
+            JHGValueIncDec(
+              initialValue: speedController.defaultBar,
+              //interval: controller.gafInterval.toInt(),
+              onChanged: (int newValue) =>
+                  speedController.onChangedDefaultBar(newValue),
+              maxValue: 120,
+            ),
+          ],
         ),
-        SizedBox(
-          height: height * 0.012,
-        ),
-        defaultWid(
-          context,
+
+        JHGHeadAndSubHWidget(
           AppStrings.defaultInterval,
-          speedController.defaultInterval,
-          onChanged: (value) {
-            speedController.onChangedDefaultInterval(value);
-          },
+          margin: EdgeInsets.only(
+            bottom: JHGHeadAndSubHWidget.bottom,
+            left: 10,
+            right: 10,
+          ),
+          lableStyle: JHGTextStyles.headLabelStyle.copyWith(fontSize: 18),
+          actions: [
+            JHGValueIncDec(
+              initialValue: speedController.defaultInterval,
+              //interval: controller.gafInterval.toInt(),
+              onChanged: (int newValue) =>
+                  speedController.onChangedDefaultInterval(newValue),
+              maxValue: 120,
+            ),
+          ],
         ),
-        SizedBox(
-          height: height * 0.012,
 
-        ),
-        defaultWid(
-          context,
+        JHGHeadAndSubHWidget(
           AppStrings.sliderInterval,
-          speedController.sliderInterval.toInt(),
-          onChanged: (value) {
-            speedController.onChangedSliderInterval(value);
-          },
+          margin: EdgeInsets.only(
+            left: 10,
+            right: 10,
+          ),
+          lableStyle: JHGTextStyles.headLabelStyle.copyWith(fontSize: 18),
+          actions: [
+            JHGValueIncDec(
+              initialValue: speedController.sliderInterval.toInt(),
+              //interval: controller.gafInterval.toInt(),
+              onChanged: (int newValue) =>
+                  speedController.onChangedSliderInterval(newValue),
+              maxValue: 120,
+            ),
+          ],
         ),
-
         SizedBox(
           height: height * 0.03,
         ),
-      ],
-    );
-  }
-
-  Row defaultWid(context, String title, int initialValue,
-      {required dynamic Function(int) onChanged}) {
-    double width = MediaQuery.of(context).size.width * 0.10;
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Heading(
-          padding: 0,
-          title: title,
-          numbers: '',
-          fontSize: 14,
-          textColor: AppColors.headingColor,
-        ),
-        JHGValueIncDec(
-            txtContainerWidth: width,
-            initialValue: initialValue,
-            onChanged: onChanged,
-            maxValue: 99),
       ],
     );
   }
