@@ -43,7 +43,7 @@ class _BpmViewState extends State<BpmView> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     // SPACER
-                    SizedBox(height: height * 0.07),
+                    SizedBox(height:JHGResponsive.isTablet(context)? height*0.15: height * 0.07),
 
                     // THIS SONG IS ANDANTE SECTION
                     Column(
@@ -54,21 +54,21 @@ class _BpmViewState extends State<BpmView> {
                           AppStrings.thisSongIs,
                           style: JHGTextStyles.lrlabelStyle.copyWith(
                             color: AppColors.whiteLight,
-                            fontSize: 16,
+                            fontSize: JHGResponsive.isTablet(context)? 20:16,
                           ),
                         ),
                         Text(
                           controller.musicName,
                           style: JHGTextStyles.lrlabelStyle.copyWith(
                             color: AppColors.whiteLight,
-                            fontSize: 24,
+                            fontSize:JHGResponsive.isTablet(context)? 28: 24,
                           ),
                         ),
                       ],
                     ),
 
                     // SPACER
-                    SizedBox(height: height * 0.06,),
+                    SizedBox(height:JHGResponsive.isTablet(context)? height*0.08: height * 0.06,),
 
                     // RED  TAP BUTTON
                     JHGIconButton(
@@ -80,8 +80,8 @@ class _BpmViewState extends State<BpmView> {
                         duration: const Duration(milliseconds: 100),
                         scale: controller.buttonScale,
                         child: Container(
-                          height: height * 0.16,
-                          width: height * 0.16,
+                          height: JHGResponsive.isTablet(context)? height*0.18: height * 0.16,
+                          width: JHGResponsive.isTablet(context)? height*0.18:height * 0.16,
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
                             color: AppColors.redPrimary,
@@ -90,7 +90,7 @@ class _BpmViewState extends State<BpmView> {
                           child: Text(
                             AppStrings.tap,
                             style: JHGTextStyles.labelStyle.copyWith(
-                              fontSize: 20,
+                              fontSize: JHGResponsive.isTablet(context)? 24: 20,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -99,7 +99,7 @@ class _BpmViewState extends State<BpmView> {
                     ),
 
                     // SPACER
-                    SizedBox(height: height * 0.07,),
+                    SizedBox(height: JHGResponsive.isTablet(context)? height*0.08:height * 0.07,),
 
                     JHGResetBtn(
                         enabled: true,
@@ -108,7 +108,7 @@ class _BpmViewState extends State<BpmView> {
                         }),
 
                     // SPACER
-                    SizedBox(height: height * 0.06,),
+                    SizedBox(height:JHGResponsive.isTablet(context)? height*0.07: height * 0.06,),
 
                     // BPM VALUE SECTION
                     BpmValueWidget(bpmValue:controller.bpm == null ? AppStrings.bpmNull : controller.bpm!.toStringAsFixed(0),),
@@ -117,7 +117,7 @@ class _BpmViewState extends State<BpmView> {
 
                   ],
                 ),
-              ),
+              ), 
             ),
           ),
         ],
