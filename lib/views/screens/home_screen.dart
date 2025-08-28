@@ -63,8 +63,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   checkToDownloadFile() async {
     final homeController = Provider.of<HomeProvider>(context, listen: false);
     if (!kIsWeb) {
-      downloadingStatus = await StringsDownloadService()
-          .isStringsDownloaded(AppStrings.nameOfApp);
+      downloadingStatus = await StringsDownloadService().isStringsDownloaded(AppStrings.nameOfApp);
       homeController.setDownloadingStatus(downloadingStatus, this);
       LocalDB.getIsFreePlan().then((value) {
         isFreePlan = value;
@@ -124,9 +123,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 child: WillPopScope(
                   onWillPop: onWillPop,
                   child: Scaffold(
-                      backgroundColor: controller.isFirstTimeOpen == true
-                          ? Colors.black.withValues(alpha: .7)
-                          : null,
+                      backgroundColor: controller.isFirstTimeOpen == true ? Colors.black.withValues(alpha: .7) : null,
                       body: Stack(
                         children: [
                           JHGBody(
@@ -136,8 +133,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                               trailingWidget: JHGSettingsButton(
                                   enabled: true,
                                   onTap: () {
-                                    Navigator.of(context)
-                                        .push(MaterialPageRoute(
+                                    Navigator.of(context).push(MaterialPageRoute(
                                       builder: (context) {
                                         return const SettingScreen();
                                       },
@@ -153,17 +149,18 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  kIsWeb ? 0.0.height : 10.0.height,
+
+                                  kIsWeb ? 0.0.height :  10.0.height,
                                   //  SizedBox(height: 10),
                                   //BUTTON SELECTION SECTION
                                   Container(
-                                    //color: Colors.red,
+                                   // color: Colors.green,
                                     constraints: BoxConstraints(
-                                        maxWidth: kIsWeb ? 380.0.w : 390.0.w),
+                                        maxWidth: kIsWeb ? 380.0.w :
+                                        JHGResponsive.isTablet(context)? 760.0.w: 390.0.w),
                                     height: height * 0.057,
                                     child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         // itemCount: buttonList.length,
                                         // shrinkWrap: true,
                                         // scrollDirection: Axis.horizontal,
@@ -177,35 +174,24 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                               },
                                               child: Container(
                                                 height: height * 0.057,
-                                                width:
-                                                    kIsWeb ? 120 : width / 3.5,
+                                                width: kIsWeb ? 120 : width / 3.5,
                                                 alignment: Alignment.center,
                                                 decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10),
-                                                    color: controller
-                                                                .selectedButton ==
-                                                            index
-                                                        ? AppColors
-                                                            .greySecondary
+                                                    borderRadius: BorderRadius.circular(10),
+                                                    color: controller.selectedButton == index
+                                                        ? AppColors.greySecondary
                                                         : AppColors.greyPrimary,
-                                                    border: Border.all(
-                                                        color: AppColors
-                                                            .greySecondary)),
+                                                    border: Border.all(color: AppColors.greySecondary)),
                                                 child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceEvenly,
+                                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                                   children: [
                                                     Text(
                                                       buttonList[index],
                                                       style: JHGTextStyles
                                                           .labelStyle
                                                           .copyWith(
-                                                        fontSize: 12,
-                                                        fontWeight:
-                                                            FontWeight.w400,
+                                                        fontSize:  JHGResponsive.isTablet(context)? 20 : 12,
+                                                        fontWeight: FontWeight.w400,
                                                       ),
                                                     ),
                                                     GestureDetector(
@@ -217,20 +203,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                                           //         buttonsDesc[
                                                           //             index]):
 
-                                                          JHGDialogHelper
-                                                              .showInfoDialog(
-                                                                  context:
-                                                                      context,
-                                                                  title:
-                                                                      buttonList[
-                                                                          index],
-                                                                  description:
-                                                                      buttonsDesc[
-                                                                          index]),
+                                                          JHGDialogHelper.showInfoDialog(
+                                                                  context: context,
+                                                                  title: buttonList[index],
+                                                                  description: buttonsDesc[index]),
                                                       child: Icon(
-                                                        Icons
-                                                            .info_outline_rounded,
-                                                        size: 15.0.w,
+                                                        Icons.info_outline_rounded,
+                                                        size: JHGResponsive.isTablet(context)? 28.0.w: 15.0.w,
                                                         color: JHGColors.white,
                                                       ),
                                                     ),
