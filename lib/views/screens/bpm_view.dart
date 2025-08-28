@@ -117,7 +117,7 @@ class _BpmViewState extends State<BpmView> {
 
                   ],
                 ),
-              ), 
+              ),
             ),
           ),
         ],

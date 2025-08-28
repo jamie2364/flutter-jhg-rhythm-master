@@ -53,21 +53,21 @@ class _SpeedViewState extends State<SpeedView> with TickerProviderStateMixin {
           Expanded(
             child: SingleChildScrollView(
               child: Container(
-                constraints: BoxConstraints(maxWidth: 345),
+                constraints: BoxConstraints(maxWidth:
+                JHGResponsive.isTablet(context)? 720:
+                345),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // SPACER
-                    kIsWeb ? 12.0.height : 22.0.height,
+                    kIsWeb ? 12.0.height :JHGResponsive.isTablet(context)? 95.0.height:  22.0.height,
                     // STARTING TEMPO
                     Heading(
                       title: AppStrings.startingTempo,
                       numbers: controller.startTempo.toStringAsFixed(0),
                       showButtons: true,
-                      addButton: () {
-                        controller.incrementTempo(
-                            settingProvider!.speedDefaultInterval.toInt());
+                      addButton: () {controller.incrementTempo(settingProvider!.speedDefaultInterval.toInt());
                       },
                       minusButton: () {
                         controller.decrementTempo(
@@ -75,7 +75,10 @@ class _SpeedViewState extends State<SpeedView> with TickerProviderStateMixin {
                       },
                     ),
                     // SPACER
-                    kIsWeb ? 6.0.height : 12.0.height,
+                    kIsWeb ? 6.0.height :
+
+                    JHGResponsive.isTablet(context)? 16.0.height:
+                    12.0.height,
                     // STARTING SLIDER
                     SliderWidget(
                         height: height,
@@ -86,7 +89,9 @@ class _SpeedViewState extends State<SpeedView> with TickerProviderStateMixin {
                           controller.setStartTempo(values);
                         }),
                     // SPACER
-                    kIsWeb ? 12.0.height : 18.0.height,
+                    kIsWeb ? 12.0.height :
+                    JHGResponsive.isTablet(context)? 26.0.height:
+                    18.0.height,
                     // TARGET TEMPO
                     Heading(
                       title: AppStrings.targetTempo,
@@ -102,7 +107,10 @@ class _SpeedViewState extends State<SpeedView> with TickerProviderStateMixin {
                       },
                     ),
                     // SPACER
-                    kIsWeb ? 12.0.height : 22.0.height,
+                    kIsWeb ? 12.0.height :
+
+                    JHGResponsive.isTablet(context)? 28.0.height:
+                    22.0.height,
                     // TARGET SLIDER
                     SliderWidget(
                       height: height,
@@ -115,7 +123,10 @@ class _SpeedViewState extends State<SpeedView> with TickerProviderStateMixin {
                     ),
 
                     // SPACER
-                    kIsWeb ? 8.0.height : 12.0.height,
+                    kIsWeb ? 8.0.height :
+
+                    JHGResponsive.isTablet(context)? 18.0.height:
+                    12.0.height,
                     // BARS
                     JHGHeadAndSubHWidget(
                       AppStrings.bars,
@@ -139,7 +150,11 @@ class _SpeedViewState extends State<SpeedView> with TickerProviderStateMixin {
                           maxValue: 60,
                         ),
                       ],
+                    ).paddingSymmetric(
+                      horizontal:           JHGResponsive.isTablet(context)? 5:0,
                     ),
+                    JHGResponsive.isTablet(context)? 5.0.height:0.0.height,
+
                     JHGHeadAndSubHWidget(
                       AppStrings.interval,
                       margin: EdgeInsets.only(
@@ -163,6 +178,8 @@ class _SpeedViewState extends State<SpeedView> with TickerProviderStateMixin {
                           maxValue: 120,
                         ),
                       ],
+                    ).paddingSymmetric(
+                      horizontal:           JHGResponsive.isTablet(context)? 5:0,
                     ),
                     // INTERVAL BUTTONS
                     // SPACER
