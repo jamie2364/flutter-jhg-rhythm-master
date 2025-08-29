@@ -53,8 +53,9 @@ class _SpeedViewState extends State<SpeedView> with TickerProviderStateMixin {
           Expanded(
             child: SingleChildScrollView(
               child: Container(
+                // color: Colors.green,
                 constraints: BoxConstraints(maxWidth:
-                JHGResponsive.isTablet(context)? 720:
+                JHGResponsive.isTablet(context)? 780.0.w:
                 345),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
