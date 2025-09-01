@@ -45,6 +45,9 @@ class _SpeedViewState extends State<SpeedView> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    bool isTablet = MediaQuery.of(context).size.width < 1100 &&
+        MediaQuery.of(context).size.width >= 701 &&
+        !kIsWeb;
     final height = MediaQuery.of(context).size.height;
     return Consumer<SpeedProvider>(builder: (context, controller, child) {
       return Column(
@@ -54,9 +57,9 @@ class _SpeedViewState extends State<SpeedView> with TickerProviderStateMixin {
             child: SingleChildScrollView(
               child: Container(
                 // color: Colors.green,
-                constraints: BoxConstraints(maxWidth:
+                constraints: BoxConstraints(maxWidth:isTablet?780.0.w:
                 JHGResponsive.isTablet(context)? 780.0.w:
-                345),
+                345.0.w),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,

@@ -44,6 +44,9 @@ class _MetroViewState extends State<MetroView> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     //metroProvider?.init();
+    bool isTablet = MediaQuery.of(context).size.width < 1100 &&
+        MediaQuery.of(context).size.width >= 701 &&
+        !kIsWeb;
     final height = MediaQuery.of(context).size.height;
     final metroWidth = JHGResponsive.isTablet(context)? 340.0.w : 220.0.w;
     final metroHeight = kIsWeb ? 290.0.h : JHGResponsive.isTablet(context)? 470.0.h:308.0.h;
@@ -63,7 +66,7 @@ class _MetroViewState extends State<MetroView> with TickerProviderStateMixin {
                     child: Container(
                       //color: Colors.blue,
                       constraints: BoxConstraints(
-                          maxWidth: JHGResponsive.isTablet(context)? 490.0.w: 345.0.w,
+                          maxWidth:isTablet?520.0.w: JHGResponsive.isTablet(context)? 490.0.w: 345.0.w,
                           minHeight: 200.0.h),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
