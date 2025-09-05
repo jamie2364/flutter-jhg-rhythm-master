@@ -1,15 +1,15 @@
 import 'dart:async';
+
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:audioplayers/audioplayers.dart';
 import 'package:reg_page/reg_page.dart';
 import 'package:rhythm_master/models/sound_model.dart';
 import 'package:rhythm_master/services/local_db.dart';
 import 'package:rhythm_master/utils/app_strings.dart';
+
 import '../models/beat_indicator_model.dart';
 import '../utils/app_assets.dart';
-import '../utils/web_audio_player.dart'
-    if (dart.library.js) '../utils/web_audio_player_web.dart';
 
 /// MetroProvider manages metronome state, BPM, beats, and sound playback.
 class MetroProvider extends ChangeNotifier {
