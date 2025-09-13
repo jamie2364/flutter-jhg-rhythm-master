@@ -7,6 +7,7 @@ import 'package:reg_page/reg_page.dart';
 import 'package:rhythm_master/models/sound_model.dart';
 import 'package:rhythm_master/services/local_db.dart';
 import 'package:rhythm_master/utils/app_strings.dart';
+import 'package:universal_html/html.dart';
 
 import '../models/beat_indicator_model.dart';
 import '../utils/app_assets.dart';
@@ -436,7 +437,20 @@ class MetroProvider extends ChangeNotifier {
   Future<void> playBeat(String beat, AudioPlayer player) async {
     final file = Utils.getAsset(beat);
     if (kIsWeb) {
-      var logic1 = file.path.replaceAll('null', 'web');
+      var logic1 = kDebugMode ? file.path : file.path.replaceAll('web/', '');
+      final path =
+          window.location.href.substring(0, window.location.href.length - 1);
+      logic1 = kDebugMode
+          ? file.path.replaceAll('null', 'web')
+          : file.path.replaceAll(
+              'null',
+              // live
+              path,
+              // 'https://musictools.io/mt-apps/mt-rhythm-toolkit',
+              // localhost
+              // 'http://localhost:8888/web',
+            );
+      // print('location ::: path: ${path}. file $logic1');
       await player.play(UrlSource(logic1));
       await player.setReleaseMode(ReleaseMode.stop);
       // playWebMetronomeSound(beat, jhgMetronomeVol);
