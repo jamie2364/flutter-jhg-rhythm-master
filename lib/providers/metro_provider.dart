@@ -7,7 +7,7 @@ import 'package:reg_page/reg_page.dart';
 import 'package:rhythm_master/models/sound_model.dart';
 import 'package:rhythm_master/services/local_db.dart';
 import 'package:rhythm_master/utils/app_strings.dart';
-import 'package:universal_html/html.dart';
+import 'package:universal_html/html.dart' hide Animation;
 
 import '../models/beat_indicator_model.dart';
 import '../utils/app_assets.dart';
@@ -438,8 +438,11 @@ class MetroProvider extends ChangeNotifier {
     final file = Utils.getAsset(beat);
     if (kIsWeb) {
       var logic1 = kDebugMode ? file.path : file.path.replaceAll('web/', '');
-      final path =
+      String path =
           window.location.href.substring(0, window.location.href.length - 1);
+      Uri uri = Uri.parse(path);
+      path = uri.replace(query: "").toString();
+      path = path.replaceAll('/?', '');
       logic1 = kDebugMode
           ? file.path.replaceAll('null', 'web')
           : file.path.replaceAll(
