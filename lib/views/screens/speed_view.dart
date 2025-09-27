@@ -2,9 +2,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_jhg_elements/jhg_elements.dart';
 import 'package:provider/provider.dart';
-import 'package:rhythm_master/utils/app_strings.dart';
 import 'package:rhythm_master/providers/setting_provider.dart';
 import 'package:rhythm_master/providers/speed_provider.dart';
+import 'package:rhythm_master/utils/app_strings.dart';
 import 'package:rhythm_master/views/extension/int_extension.dart';
 import 'package:rhythm_master/views/extension/widget_extension.dart';
 import 'package:rhythm_master/views/widgets/bpm_value_widget.dart';
@@ -57,21 +57,32 @@ class _SpeedViewState extends State<SpeedView> with TickerProviderStateMixin {
             child: SingleChildScrollView(
               child: Container(
                 // color: Colors.green,
-                constraints: BoxConstraints(maxWidth:isTablet?780.0.w:
-                JHGResponsive.isTablet(context)? 780.0.w:
-                345.0.w),
+                constraints: BoxConstraints(
+                    maxWidth: isTablet
+                        ? 780.0.w
+                        :
+                        // JHGResponsive.isTablet(context)
+                        //     ? 780.0.w
+                        //     :
+                        345.0.w),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // SPACER
-                    kIsWeb ? 12.0.height :JHGResponsive.isTablet(context)? 95.0.height:  22.0.height,
+                    kIsWeb
+                        ? 12.0.height
+                        : JHGResponsive.isTablet(context)
+                            ? 95.0.height
+                            : 22.0.height,
                     // STARTING TEMPO
                     Heading(
                       title: AppStrings.startingTempo,
                       numbers: controller.startTempo.toStringAsFixed(0),
                       showButtons: true,
-                      addButton: () {controller.incrementTempo(settingProvider!.speedDefaultInterval.toInt());
+                      addButton: () {
+                        controller.incrementTempo(
+                            settingProvider!.speedDefaultInterval.toInt());
                       },
                       minusButton: () {
                         controller.decrementTempo(
@@ -79,10 +90,11 @@ class _SpeedViewState extends State<SpeedView> with TickerProviderStateMixin {
                       },
                     ),
                     // SPACER
-                    kIsWeb ? 6.0.height :
-
-                    JHGResponsive.isTablet(context)? 16.0.height:
-                    12.0.height,
+                    kIsWeb
+                        ? 6.0.height
+                        : JHGResponsive.isTablet(context)
+                            ? 16.0.height
+                            : 12.0.height,
                     // STARTING SLIDER
                     SliderWidget(
                         height: height,
@@ -93,9 +105,11 @@ class _SpeedViewState extends State<SpeedView> with TickerProviderStateMixin {
                           controller.setStartTempo(values);
                         }),
                     // SPACER
-                    kIsWeb ? 12.0.height :
-                    JHGResponsive.isTablet(context)? 26.0.height:
-                    18.0.height,
+                    kIsWeb
+                        ? 12.0.height
+                        : JHGResponsive.isTablet(context)
+                            ? 26.0.height
+                            : 18.0.height,
                     // TARGET TEMPO
                     Heading(
                       title: AppStrings.targetTempo,
@@ -111,10 +125,11 @@ class _SpeedViewState extends State<SpeedView> with TickerProviderStateMixin {
                       },
                     ),
                     // SPACER
-                    kIsWeb ? 12.0.height :
-
-                    JHGResponsive.isTablet(context)? 28.0.height:
-                    22.0.height,
+                    kIsWeb
+                        ? 12.0.height
+                        : JHGResponsive.isTablet(context)
+                            ? 28.0.height
+                            : 22.0.height,
                     // TARGET SLIDER
                     SliderWidget(
                       height: height,
@@ -127,10 +142,11 @@ class _SpeedViewState extends State<SpeedView> with TickerProviderStateMixin {
                     ),
 
                     // SPACER
-                    kIsWeb ? 8.0.height :
-
-                    JHGResponsive.isTablet(context)? 18.0.height:
-                    12.0.height,
+                    kIsWeb
+                        ? 8.0.height
+                        : JHGResponsive.isTablet(context)
+                            ? 18.0.height
+                            : 12.0.height,
                     // BARS
                     JHGHeadAndSubHWidget(
                       AppStrings.bars,
@@ -155,9 +171,9 @@ class _SpeedViewState extends State<SpeedView> with TickerProviderStateMixin {
                         ),
                       ],
                     ).paddingSymmetric(
-                      horizontal:           JHGResponsive.isTablet(context)? 5:0,
+                      horizontal: JHGResponsive.isTablet(context) ? 5 : 0,
                     ),
-                    JHGResponsive.isTablet(context)? 5.0.height:0.0.height,
+                    JHGResponsive.isTablet(context) ? 5.0.height : 0.0.height,
 
                     JHGHeadAndSubHWidget(
                       AppStrings.interval,
@@ -183,7 +199,7 @@ class _SpeedViewState extends State<SpeedView> with TickerProviderStateMixin {
                         ),
                       ],
                     ).paddingSymmetric(
-                      horizontal:           JHGResponsive.isTablet(context)? 5:0,
+                      horizontal: JHGResponsive.isTablet(context) ? 5 : 0,
                     ),
                     // INTERVAL BUTTONS
                     // SPACER

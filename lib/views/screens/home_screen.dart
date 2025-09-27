@@ -30,18 +30,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   JHGInterstitialAd? interstitialAd;
   DateTime? currentBackPressTime;
 
-  // List on buttons, Metronome | Tap Tempo | Speed Trainer
-  List<String> buttonList = [
-    AppStrings.metronome,
-    AppStrings.tapTempo,
-    AppStrings.speedTrainer
-  ];
-  List<String> buttonsDesc = [
-    AppStrings.metronomeDesc,
-    AppStrings.tapTempoDesc,
-    AppStrings.speedTrainerDesc
-  ];
-
   // Set expiry date when user login to the app
   // we will expire user login after 14 days
   setExpiryDate() async {
@@ -159,216 +147,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                   kIsWeb ? 0.0.height : 10.0.height,
                                   //  SizedBox(height: 10),
                                   //BUTTON SELECTION SECTION
-
                                   isTablet
-                                      ? Container(
-                                          // color: Colors.green,
-                                          width: 800.0.w,
-                                          height: height * 0.057,
-                                    child: Row(
-                                        mainAxisAlignment:
-                                        MainAxisAlignment
-                                            .spaceBetween,
-                                        // itemCount: buttonList.length,
-                                        // shrinkWrap: true,
-                                        // scrollDirection: Axis.horizontal,
-                                        // itemBuilder: (context, index) {
-                                        children: List.generate(
-                                            buttonList.length, (index) {
-                                          return MouseRegion(
-                                            child: GestureDetector(
-                                              onTap: () async {
-                                                controller
-                                                    .changeTab(index);
-                                              },
-                                              child: Container(
-                                                height: height * 0.057,
-                                                width: width / 4,
-                                                alignment:
-                                                Alignment.center,
-                                                decoration: BoxDecoration(
-                                                    borderRadius:
-                                                    BorderRadius
-                                                        .circular(10),
-                                                    color: controller
-                                                        .selectedButton ==
-                                                        index
-                                                        ? AppColors
-                                                        .greySecondary
-                                                        : AppColors
-                                                        .greyPrimary,
-                                                    border: Border.all(
-                                                        color: AppColors
-                                                            .greySecondary)),
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceEvenly,
-                                                  children: [
-                                                    Text(
-                                                      buttonList[index],
-                                                      style: JHGTextStyles
-                                                          .labelStyle
-                                                          .copyWith(
-                                                        fontSize: JHGResponsive
-                                                            .isTablet(
-                                                            context)
-                                                            ? 20
-                                                            : 12,
-                                                        fontWeight:
-                                                        FontWeight
-                                                            .w400,
-                                                      ),
-                                                    ),
-                                                    GestureDetector(
-                                                      onTap: () =>
-                                                      // index!=0?
-                                                      //     AppUtils.showPopup(
-                                                      //         context,
-                                                      //         buttonList[index],
-                                                      //         buttonsDesc[
-                                                      //             index]):
+                                      ? buildTabView(
+                                          height, controller, width, context)
+                                      : buildAllView(
+                                          context, height, controller, width),
 
-                                                      JHGDialogHelper.showInfoDialog(
-                                                          context:
-                                                          context,
-                                                          title: buttonList[
-                                                          index],
-                                                          description:
-                                                          buttonsDesc[
-                                                          index]),
-                                                      child: Icon(
-                                                        Icons
-                                                            .info_outline_rounded,
-                                                        size: JHGResponsive
-                                                            .isTablet(
-                                                            context)
-                                                            ? 28.0.w
-                                                            : 15.0.w,
-                                                        color: JHGColors
-                                                            .white,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                            cursor:
-                                            SystemMouseCursors.click,
-                                          );
-                                        })),
-                                        )
-                                      : Container(
-                                          // color: Colors.green,
-                                          constraints: BoxConstraints(
-                                              maxWidth: kIsWeb
-                                                  ? 380.0.w
-                                                  : JHGResponsive.isTablet(
-                                                          context)
-                                                      ? 760.0.w
-                                                      : 390.0.w),
-                                          height: height * 0.057,
-                                          child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              // itemCount: buttonList.length,
-                                              // shrinkWrap: true,
-                                              // scrollDirection: Axis.horizontal,
-                                              // itemBuilder: (context, index) {
-                                              children: List.generate(
-                                                  buttonList.length, (index) {
-                                                return MouseRegion(
-                                                  child: GestureDetector(
-                                                    onTap: () async {
-                                                      controller
-                                                          .changeTab(index);
-                                                    },
-                                                    child: Container(
-                                                      height: height * 0.057,
-                                                      width: kIsWeb
-                                                          ? 120
-                                                          : width / 3.5,
-                                                      alignment:
-                                                          Alignment.center,
-                                                      decoration: BoxDecoration(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(10),
-                                                          color: controller
-                                                                      .selectedButton ==
-                                                                  index
-                                                              ? AppColors
-                                                                  .greySecondary
-                                                              : AppColors
-                                                                  .greyPrimary,
-                                                          border: Border.all(
-                                                              color: AppColors
-                                                                  .greySecondary)),
-                                                      child: Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .spaceEvenly,
-                                                        children: [
-                                                          Text(
-                                                            buttonList[index],
-                                                            style: JHGTextStyles
-                                                                .labelStyle
-                                                                .copyWith(
-                                                              fontSize: JHGResponsive
-                                                                      .isTablet(
-                                                                          context)
-                                                                  ? 20
-                                                                  : 12,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w400,
-                                                            ),
-                                                          ),
-                                                          GestureDetector(
-                                                            onTap: () =>
-                                                                // index!=0?
-                                                                //     AppUtils.showPopup(
-                                                                //         context,
-                                                                //         buttonList[index],
-                                                                //         buttonsDesc[
-                                                                //             index]):
-
-                                                                JHGDialogHelper.showInfoDialog(
-                                                                    context:
-                                                                        context,
-                                                                    title: buttonList[
-                                                                        index],
-                                                                    description:
-                                                                        buttonsDesc[
-                                                                            index]),
-                                                            child: Icon(
-                                                              Icons
-                                                                  .info_outline_rounded,
-                                                              size: JHGResponsive
-                                                                      .isTablet(
-                                                                          context)
-                                                                  ? 28.0.w
-                                                                  : 15.0.w,
-                                                              color: JHGColors
-                                                                  .white,
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  cursor:
-                                                      SystemMouseCursors.click,
-                                                );
-                                              })),
-                                        ),
-
-                                  // ScreenView base on button selection
-
-                                  // controller.isAudioDownloading == true
-                                  //     ? SizedBox()
-                                  //     :
                                   Expanded(
                                     child: controller.selectedButton == 0
                                         ? const MetroView()
@@ -460,5 +244,119 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             );
           });
         });
+  }
+
+  Widget buildAllView(BuildContext context, double height,
+      HomeProvider controller, double width) {
+    return Container(
+      constraints: BoxConstraints(
+          maxWidth: kIsWeb
+              ? 380.0.w
+              : JHGResponsive.isTablet(context)
+                  ? 760.0.w
+                  : 390.0.w),
+      height: height * 0.057,
+      child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: List.generate(AppConstants.buttonList.length, (index) {
+            return MouseRegion(
+              child: GestureDetector(
+                onTap: () async {
+                  controller.changeTab(index);
+                },
+                child: Container(
+                  height: height * 0.057,
+                  width: kIsWeb ? 120 : width / 3.5,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: controller.selectedButton == index
+                          ? AppColors.greySecondary
+                          : AppColors.greyPrimary,
+                      border: Border.all(color: AppColors.greySecondary)),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Text(
+                        AppConstants.buttonList[index],
+                        style: JHGTextStyles.labelStyle.copyWith(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () => JHGDialogHelper.showInfoDialog(
+                            context: context,
+                            title: AppConstants.buttonList[index],
+                            description: AppConstants.buttonsDesc[index]),
+                        child: Icon(
+                          Icons.info_outline_rounded,
+                          size: 16,
+                          color: JHGColors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              cursor: SystemMouseCursors.click,
+            );
+          })),
+    );
+  }
+
+  Widget buildTabView(double height, HomeProvider controller, double width,
+      BuildContext context) {
+    return SizedBox(
+      width: 800.0.w,
+      height: height * 0.057,
+      child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: List.generate(AppConstants.buttonList.length, (index) {
+            return MouseRegion(
+              child: GestureDetector(
+                onTap: () async {
+                  controller.changeTab(index);
+                },
+                child: Container(
+                  height: height * 0.057,
+                  width: width / 4,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: controller.selectedButton == index
+                          ? AppColors.greySecondary
+                          : AppColors.greyPrimary,
+                      border: Border.all(color: AppColors.greySecondary)),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Text(
+                        AppConstants.buttonList[index],
+                        style: JHGTextStyles.labelStyle.copyWith(
+                          fontSize: JHGResponsive.isTablet(context) ? 20 : 12,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () => JHGDialogHelper.showInfoDialog(
+                            context: context,
+                            title: AppConstants.buttonList[index],
+                            description: AppConstants.buttonsDesc[index]),
+                        child: Icon(
+                          Icons.info_outline_rounded,
+                          size:
+                              JHGResponsive.isTablet(context) ? 28.0.w : 15.0.w,
+                          color: JHGColors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              cursor: SystemMouseCursors.click,
+            );
+          })),
+    );
   }
 }

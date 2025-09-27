@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 
+import 'app_strings.dart';
+
 class AppConstants {
   AppConstants._();
 
@@ -47,4 +49,16 @@ class AppConstants {
         'Early access to new features',
         'Premium support',
       ];
+
+  // List on buttons, Metronome | Tap Tempo | Speed Trainer
+  static List<String> buttonList = [
+    AppStrings.metronome,
+    AppStrings.tapTempo,
+    AppStrings.speedTrainer
+  ];
+  static List<String> buttonsDesc = [
+    AppStrings.metronomeDesc,
+    AppStrings.tapTempoDesc,
+    AppStrings.speedTrainerDesc
+  ];
 }
