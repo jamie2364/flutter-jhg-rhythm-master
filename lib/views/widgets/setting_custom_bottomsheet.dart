@@ -118,7 +118,6 @@ settingCustomBottomSheet(BuildContext context,bool isMetronome){
                         SizedBox(height: 25),
                         JHGResetBtn(
                                 enabled: true,
-                                size: 30,
                                 onTap: () {
                                   controller.resetSettingCustomBottomSheet();
                                 }).center,

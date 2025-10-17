@@ -47,7 +47,7 @@ dependencies:
   flutter_jhg_elements:
     git:
       url: https://github.com/jamie2364/flutter_jhg_elements
-      ref: main
+      ref: lucid-icon
 
 
 
@@ -104,3 +104,8 @@ flutter:
     # - assets/audio/
     - web/assets/audio/
 
+dependency_overrides:
+  flutter_jhg_elements:
+    git:
+      url: https://github.com/jamie2364/flutter_jhg_elements
+      ref: lucid-icon

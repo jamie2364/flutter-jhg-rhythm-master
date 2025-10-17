@@ -113,7 +113,6 @@ customSelectionBottomSheet(
                   SizedBox(height: 25),
                   JHGResetBtn(
                       enabled: true,
-                      size: 30,
                       onTap: () {
                         controller.resetMetronomeCustomBottomSheet();
                       }).center,
