@@ -9,10 +9,8 @@ import 'package:rhythm_master/views/extension/widget_extension.dart';
 
 import 'bottom_sheet_widget.dart';
 
-customSelectionBottomSheet(
-  BuildContext context,
-  TickerProviderStateMixin ticker,
-) {
+customSelectionBottomSheet(BuildContext context,
+    TickerProviderStateMixin ticker, Function() onTapSave) {
   return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -93,6 +91,7 @@ customSelectionBottomSheet(
                     onTap: () async {
                       Navigator.pop(context);
                       controller.setValueOfBottomSheet(ticker);
+                      onTapSave();
                     },
                     child: Center(
                       child: Container(

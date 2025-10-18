@@ -115,7 +115,10 @@ class _MetroViewState extends State<MetroView> with TickerProviderStateMixin {
                                 onButtonTap: (int index) async {
                                   if (index == provider.tapButtonList.length) {
                                     provider.setMetronomeDefaultValue();
-                                    customSelectionBottomSheet(context, this);
+                                    customSelectionBottomSheet(context, this,
+                                        () {
+                                      provider.startStop(this);
+                                    });
                                   } else {
                                     provider.setBeats(
                                         ticker: this,
@@ -237,6 +240,7 @@ class BeatIndicatorDots extends StatelessWidget {
     required this.isTablet,
     required this.provider,
   });
+
   final MetroProvider provider;
   final bool isTablet;
 
@@ -318,6 +322,7 @@ class MetroUi extends StatelessWidget {
     required this.onChanged,
     required this.isTablet,
   });
+
   final bool isTablet;
   final double metroHeight;
   final double metroWidth;
@@ -325,6 +330,7 @@ class MetroUi extends StatelessWidget {
   final double bpm2x;
   final MetroProvider provider;
   final void Function(double)? onChanged;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -513,9 +519,11 @@ class ButtonsSection extends StatelessWidget {
     required this.provider,
     required this.onButtonTap,
   });
+
   final MetroProvider provider;
   final bool isTablet;
   final void Function(int) onButtonTap;
+
   @override
   Widget build(BuildContext context) {
     final height = Utils.height(context);
@@ -559,30 +567,40 @@ class ButtonsSection extends StatelessWidget {
                         children: [
                           (index == 4)
                               ? JHGIconButton(
-                                  size:
-                                      JHGResponsive.isTablet(context) ? 25 : 20,
+                                  size: kIsWeb
+                                      ? 17
+                                      : JHGResponsive.isTablet(context)
+                                          ? 25
+                                          : 20,
                                   iconData: Icons.edit,
                                   iconColor: JHGColors.white,
                                 )
-                                  .paddingOnly(top: 8, right: 8, bottom: 0)
-                                  .align(Alignment.topRight)
+                                  .paddingOnly(
+                                      top: 8, right: kIsWeb ? 0 : 8, bottom: 0)
+                                  .align(Alignment.center)
                               : SizedBox(),
-                          Text(
-                            (index == provider.tapButtonList.length &&
-                                    provider.customBeatValue == null)
-                                ? "Custom"
-                                : (index == provider.tapButtonList.length &&
-                                        provider.customBeatValue != null)
-                                    ? provider.customBeatValue!
-                                    : provider.tapButtonList[index],
-                            style: JHGTextStyles.subLabelStyle.copyWith(
-                              color: AppColors.whitePrimary,
-                              fontSize:
-                                  (index == provider.tapButtonList.length &&
-                                          provider.customBeatValue == null)
-                                      ? 12
-                                      : 18,
-                              fontWeight: FontWeight.w500,
+                          Flexible(
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(
+                                (index == provider.tapButtonList.length &&
+                                        provider.customBeatValue == null)
+                                    ? "Custom"
+                                    : (index == provider.tapButtonList.length &&
+                                            provider.customBeatValue != null)
+                                        ? provider.customBeatValue!
+                                        : provider.tapButtonList[index],
+                                style: JHGTextStyles.subLabelStyle.copyWith(
+                                  color: AppColors.whitePrimary,
+                                  fontSize:
+                                      (index == provider.tapButtonList.length &&
+                                              provider.customBeatValue == null)
+                                          ? 12
+                                          : 18,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
                             ),
                           ),
                         ],
