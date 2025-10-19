@@ -232,11 +232,18 @@ class _SpeedViewState extends State<SpeedView> with TickerProviderStateMixin {
                 onTap: () {
                   controller.clearSpeedTrainer(true);
                 }),
-            centerWidget: JHGPlayPauseBtn(
-                isPlaying: controller.isPlaying,
-                onChanged: (val) {
-                  controller.startStop();
-                }),
+            centerWidget: Theme(
+              data: ThemeData(
+                splashColor: Colors.transparent,
+                highlightColor: Colors.transparent,
+                hoverColor: Colors.transparent,
+              ),
+              child: JHGPlayPauseBtn(
+                  isPlaying: controller.isPlaying,
+                  onChanged: (val) {
+                    controller.startStop();
+                  }),
+            ),
           ),
         ],
       );

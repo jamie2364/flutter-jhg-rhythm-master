@@ -32,95 +32,88 @@ class _BpmViewState extends State<BpmView> {
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
     return Consumer<TapTempoProvider>(builder: (context, controller, child) {
-      return Column(
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              child: Container(
-                constraints: BoxConstraints(maxWidth: 345),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    // SPACER
-                    SizedBox(height:JHGResponsive.isTablet(context)? height*0.15: height * 0.07),
+      return Container(
+        constraints: BoxConstraints(maxWidth: 345),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const Spacer(flex: 2),
 
-                    // THIS SONG IS ANDANTE SECTION
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text(
-                          AppStrings.thisSongIs,
-                          style: JHGTextStyles.lrlabelStyle.copyWith(
-                            color: AppColors.whiteLight,
-                            fontSize: JHGResponsive.isTablet(context)? 20:16,
-                          ),
-                        ),
-                        Text(
-                          controller.musicName,
-                          style: JHGTextStyles.lrlabelStyle.copyWith(
-                            color: AppColors.whiteLight,
-                            fontSize:JHGResponsive.isTablet(context)? 28: 24,
-                          ),
-                        ),
-                      ],
-                    ),
+            // THIS SONG IS ANDANTE SECTION
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  AppStrings.thisSongIs,
+                  style: JHGTextStyles.lrlabelStyle.copyWith(
+                    color: AppColors.whiteLight,
+                    fontSize: JHGResponsive.isTablet(context)? 20:16,
+                  ),
+                ),
+                Text(
+                  controller.musicName,
+                  style: JHGTextStyles.lrlabelStyle.copyWith(
+                    color: AppColors.whiteLight,
+                    fontSize:JHGResponsive.isTablet(context)? 28: 24,
+                  ),
+                ),
+              ],
+            ),
 
-                    // SPACER
-                    SizedBox(height:JHGResponsive.isTablet(context)? height*0.08: height * 0.06,),
+            const Spacer(flex: 1),
 
-                    // RED  TAP BUTTON
-                    JHGIconButton(
-                      onTap: () {
-                        controller.handleTap();
-                      },
-                      child: AnimatedScale(
-                        curve: Curves.easeIn,
-                        duration: const Duration(milliseconds: 100),
-                        scale: controller.buttonScale,
-                        child: Container(
-                          height: JHGResponsive.isTablet(context)? height*0.18: height * 0.16,
-                          width: JHGResponsive.isTablet(context)? height*0.18:height * 0.16,
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            color: AppColors.redPrimary,
-                            shape: BoxShape.circle,
-                          ),
-                          child: Text(
-                            AppStrings.tap,
-                            style: JHGTextStyles.labelStyle.copyWith(
-                              fontSize: JHGResponsive.isTablet(context)? 24: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+            // RED  TAP BUTTON
+            SizedBox(
+              height: JHGResponsive.isTablet(context) ? height * 0.22 : height * 0.20,
+              width: JHGResponsive.isTablet(context) ? height * 0.22 : height * 0.20,
+              child: Center(
+                child: GestureDetector(
+                  onTap: () {
+                    controller.handleTap();
+                  },
+                  child: AnimatedScale(
+                    curve: Curves.easeIn,
+                    duration: const Duration(milliseconds: 100),
+                    scale: controller.buttonScale,
+                    child: Container(
+                      height: JHGResponsive.isTablet(context)? height*0.18: height * 0.16,
+                      width: JHGResponsive.isTablet(context)? height*0.18:height * 0.16,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: AppColors.redPrimary,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Text(
+                        AppStrings.tap,
+                        style: JHGTextStyles.labelStyle.copyWith(
+                          fontSize: JHGResponsive.isTablet(context)? 24: 20,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.whitePrimary,
                         ),
                       ),
                     ),
-
-                    // SPACER
-                    SizedBox(height: JHGResponsive.isTablet(context)? height*0.08:height * 0.07,),
-
-                    JHGResetBtn(
-                        enabled: true,
-                        onTap: () {
-                          controller.clearBPM();
-                        }),
-
-                    // SPACER
-                    SizedBox(height:JHGResponsive.isTablet(context)? height*0.07: height * 0.06,),
-
-                    // BPM VALUE SECTION
-                    BpmValueWidget(bpmValue:controller.bpm == null ? AppStrings.bpmNull : controller.bpm!.toStringAsFixed(0),),
-
-                    SizedBox(height: height * 0.1,),
-
-                  ],
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+
+            const Spacer(flex: 1),
+
+            JHGResetBtn(
+                enabled: true,
+                onTap: () {
+                  controller.clearBPM();
+                }),
+
+            SizedBox(height: height * 0.04),
+
+            // BPM VALUE SECTION
+            BpmValueWidget(bpmValue:controller.bpm == null ? AppStrings.bpmNull : controller.bpm!.toStringAsFixed(0),),
+
+            const Spacer(flex: 2),
+          ],
+        ),
       );
     });
   }
