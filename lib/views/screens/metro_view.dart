@@ -549,7 +549,7 @@ class ButtonsSection extends StatelessWidget {
                                           : JHGResponsive.isTablet(context)
                                               ? 25
                                               : 20,
-                                      iconData: LucideIcons.pen,
+                                      iconData: LucideIcons.pen300,
                                       isBackGround: false
                                     ),
                                   )

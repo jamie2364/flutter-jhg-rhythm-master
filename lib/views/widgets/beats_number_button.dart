@@ -44,7 +44,7 @@ class _BeatsNumberButtonState extends State<BeatsNumberButton> {
                 ),
                 child: Center(
                     child: Icon(
-                  Icons.remove,
+                  LucideIcons.minus300,
                   color: AppColors.whitePrimary,
                 )),
               ),
@@ -85,7 +85,7 @@ class _BeatsNumberButtonState extends State<BeatsNumberButton> {
               ),
               child: Center(
                   child: Icon(
-                Icons.add,
+                LucideIcons.plus300,
                 color: AppColors.whitePrimary,
               )),
             ),

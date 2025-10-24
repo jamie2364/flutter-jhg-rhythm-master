@@ -192,7 +192,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                           MainAxisAlignment.spaceBetween,
                                       children: [
                                         Icon(
-                                          Icons.info_outline,
+                                          LucideIcons.info300,
                                           color: AppColors.whitePrimary,
                                           size: 30,
                                         ),
@@ -210,7 +210,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                                   .setToNotFirstTimeOpenApp();
                                             },
                                             child: Icon(
-                                              Icons.close,
+                                              LucideIcons.x300,
                                               color: AppColors.whitePrimary,
                                               size: 30,
                                             ))
@@ -290,7 +290,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                             title: AppConstants.buttonList[index],
                             description: AppConstants.buttonsDesc[index]),
                         child: Icon(
-                          Icons.info_outline_rounded,
+                          LucideIcons.info300,
                           size: 16,
                           color: JHGColors.white,
                         ),
@@ -344,7 +344,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                             title: AppConstants.buttonList[index],
                             description: AppConstants.buttonsDesc[index]),
                         child: Icon(
-                          Icons.info_outline_rounded,
+                          LucideIcons.info300,
                           size:
                               JHGResponsive.isTablet(context) ? 28.0.w : 15.0.w,
                           color: JHGColors.white,

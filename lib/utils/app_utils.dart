@@ -59,7 +59,7 @@ class AppUtils {
                   children: [
                     JHGIconButton(
                       size: 40.0.w,
-                      iconData: Icons.close,
+                      iconData: LucideIcons.x100,
                       onTap: () => Navigator.pop(context),
                     ).align(Alignment.topRight),
                     10.0.height,

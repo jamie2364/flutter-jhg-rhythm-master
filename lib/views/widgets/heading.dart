@@ -60,7 +60,7 @@ class _HeadingState extends State<Heading> {
                     onLongPressEnd: (details) => _timer.cancel(),
                     onTap: widget.minusButton,
                     child: Icon(
-                      Icons.remove,
+                      LucideIcons.minus,
                       color: Colors.white,
                     ),
                   ),
@@ -86,7 +86,7 @@ class _HeadingState extends State<Heading> {
                     onLongPressEnd: (details) => _timer.cancel(),
                     onTap: widget.addButton,
                     child: Icon(
-                      Icons.add,
+                      LucideIcons.plus300,
                       color: Colors.white,
                     ),
                   ),
