@@ -227,6 +227,8 @@ class MetroProvider extends ChangeNotifier {
     isPlaying = false;
     controller?.dispose();
     controller = null;
+    pulseController?.dispose();
+    pulseController = null;
   }
 
   /// Resets the metronome to default values
@@ -309,28 +311,35 @@ class MetroProvider extends ChangeNotifier {
   void setTimer(TickerProviderStateMixin ticker) {
     totalTick = 0;
     firstTime = true;
-    controller?.reset();
-    controller?.dispose();
+
     final timerInterval = (timeStamp / bpm).round();
+
+    controller?.stop();
+    controller?.dispose();
+    timer?.cancel();
+
     controller = AnimationController(
       duration: Duration(milliseconds: timerInterval),
       vsync: ticker,
     );
     animation = Tween<double>(begin: 0, end: 1).animate(controller!);
-    timer?.cancel();
+
+    bool reverseHandled = false;
     timer = Timer.periodic(Duration(milliseconds: timerInterval), (_) {
       playSound();
     });
-    controller!.repeat(reverse: true);
+
     controller!.addStatusListener((status) {
       if (status == AnimationStatus.forward && firstTime) {
         firstTime = false;
       }
-      if (status == AnimationStatus.reverse && firstTime) {
+      if (status == AnimationStatus.reverse && !reverseHandled) {
+        reverseHandled = true;
         animation = Tween<double>(begin: -1, end: 1).animate(controller!);
         controller!.repeat(reverse: true);
       }
     });
+    controller!.repeat(reverse: true);
   }
 
   /// Sets beats and updates state based on selected button
