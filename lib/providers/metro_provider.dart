@@ -80,11 +80,17 @@ class MetroProvider extends ChangeNotifier {
 
   // Animation controller for metronome UI
   AnimationController? controller;
+  AnimationController? pulseController;
   Animation<double>? animation;
 
   // Audio players for metronome sounds
-  final AudioPlayer player1 = AudioPlayer();
-  final AudioPlayer player2 = AudioPlayer();
+  // Use a pool of players for low-latency, rapid playback
+  final AudioPlayer _accentPlayer = AudioPlayer();
+  final AudioPlayer _regularPlayer = AudioPlayer();
+
+  // Track loaded source to avoid unnecessary loading
+  String? _accentSource;
+  String? _regularSource;
 
   int? selectedIndex;
   double timeStamp = 0;
@@ -114,11 +120,42 @@ class MetroProvider extends ChangeNotifier {
 
   /// Preloads metronome sounds for smooth playback
   Future<void> preloadSounds() async {
-    // No explicit preload needed for audioplayers, but you can set volume to 1.0
+    // 1. Set the two necessary audio sources.
+    Source? source1 = _getAudioSource(firstBeat);
+    Source? source2 = _getAudioSource(secondBeat);
+
+    // 2. Preload the audio files for faster, non-blocking playback.
+    if (source1 != null) {
+      await _accentPlayer.setSource(source1);
+      _accentSource = firstBeat;
+    }
+    if (source2 != null) {
+      await _regularPlayer.setSource(source2);
+      _regularSource = secondBeat;
+    }
+
+    // Set low-latency mode if possible and required (though setSource is often sufficient for preloading)
     await Future.wait([
-      player1.setVolume(1.0),
-      player2.setVolume(1.0),
+      _accentPlayer.setVolume(1.0),
+      _regularPlayer.setVolume(1.0),
+      _accentPlayer.setReleaseMode(ReleaseMode.stop),
+      _regularPlayer.setReleaseMode(ReleaseMode.stop),
     ]);
+  }
+
+  // Helper to determine the correct Source type for audio assets
+  Source? _getAudioSource(String beat) {
+    if (kIsWeb) {
+      // Web assets are handled uniquely in the playBeat function, this just provides the AssetSource for non-web logic flow
+      return AssetSource(beat);
+    } else {
+      final file = Utils.getAsset(beat);
+      if (file.existsSync()) {
+        return DeviceFileSource(file.path);
+      } else {
+        return AssetSource(beat);
+      }
+    }
   }
 
   /// Increments numerator (max 96)
@@ -212,9 +249,12 @@ class MetroProvider extends ChangeNotifier {
     totalTick = 0;
     isPlaying = false;
     getBeatsDuration(defaultBeatValue!, selectedButton);
+
+    // Update current sound based on defaults
     soundName = soundList[selectedIndex ?? defaultSound!].name!;
     firstBeat = soundList[selectedIndex ?? defaultSound!].beat1!;
     secondBeat = soundList[selectedIndex ?? defaultSound!].beat2!;
+
     await preloadSounds();
     createBeatIndicatorList();
     notifyListeners();
@@ -229,6 +269,8 @@ class MetroProvider extends ChangeNotifier {
     controller = null;
     pulseController?.dispose();
     pulseController = null;
+    await _accentPlayer.dispose(); // Dispose the individual players
+    await _regularPlayer.dispose();
   }
 
   /// Resets the metronome to default values
@@ -312,6 +354,7 @@ class MetroProvider extends ChangeNotifier {
     totalTick = 0;
     firstTime = true;
 
+    // The core calculation remains correct
     final timerInterval = (timeStamp / bpm).round();
 
     controller?.stop();
@@ -325,7 +368,10 @@ class MetroProvider extends ChangeNotifier {
     animation = Tween<double>(begin: 0, end: 1).animate(controller!);
 
     bool reverseHandled = false;
+
+    // Timer is set to the calculated interval (e.g., 270ms)
     timer = Timer.periodic(Duration(milliseconds: timerInterval), (_) {
+      // Call playSound directly, it now uses a non-awaiting play mechanism
       playSound();
     });
 
@@ -394,6 +440,12 @@ class MetroProvider extends ChangeNotifier {
     firstBeat = beat1;
     secondBeat = beat2;
     totalTick = 0;
+
+    // Check if new sounds are different and reload if necessary
+    if (firstBeat != _accentSource || secondBeat != _regularSource) {
+      preloadSounds();
+    }
+
     notifyListeners();
     if (ticker == null) return;
     if (isPlaying) {
@@ -403,49 +455,48 @@ class MetroProvider extends ChangeNotifier {
 
   /// Plays the appropriate sound for the current tick
   Future<void> playSound() async {
-    // Ensure players have the correct volume
-    if (player1.volume == 0 || player2.volume == 0) {
-      await Future.wait([player1.setVolume(1.0), player2.setVolume(1.0)]);
-    }
-    if (beatIndicator.isEmpty) return;
-    if (totalBeat > 12) {
-      if (totalTick == 1) {
-        playBeat(firstBeat, player1);
-      } else if (totalTick <= totalBeat) {
-        playBeat(secondBeat, player2);
-        if (totalTick == totalBeat) {
-          totalTick = 0;
-        }
-      }
-    } else {
-      if (totalTick == 1) {
-        // Optionally play accented beat
-      } else if (totalTick <= totalBeat) {
-        // Optionally play regular beat
-        if (totalTick == totalBeat) {
-          totalTick = 0;
-        }
-      }
+    // Determine which player to use for the current tick
+    AudioPlayer? playerToUse;
 
+    if (beatIndicator.isEmpty) return;
+
+    // Determine if it's the accented or regular beat
+    if (totalTick < beatIndicator.length) {
       if (beatIndicator[totalTick].isAccentedBeat) {
-        playBeat(firstBeat, player1);
+        playerToUse = _accentPlayer;
       } else if (beatIndicator[totalTick].isPlanBeat) {
-        playBeat(secondBeat, player2);
+        playerToUse = _regularPlayer;
       }
-      // Muted beat: do nothing
-    }
-    if (beatIndicator.length > totalTick) {
-      totalTick += 1;
+      // If isMutedBeat, playerToUse remains null, so no sound is played.
+
+      // Reset totalTick for the next cycle
+      if (totalTick == beatIndicator.length - 1) {
+        totalTick = 0;
+      } else {
+        totalTick += 1;
+      }
     } else {
-      totalTick = beatIndicator.length - 1;
+      // Catch case where totalTick might exceed index, reset to first beat for next cycle
+      totalTick = 0;
+      playerToUse = _accentPlayer; // Default to accent on measure restart
     }
+
+    if (playerToUse != null) {
+      // Trigger the low-latency play without awaiting, minimizing timer blocking
+      // We rely on the player already being loaded from preloadSounds.
+      playBeat(playerToUse);
+    }
+
     notifyListeners();
   }
 
-  /// Plays a specific beat sound using the given player
-  Future<void> playBeat(String beat, AudioPlayer player) async {
-    final file = Utils.getAsset(beat);
+  /// Plays a specific beat sound using the given player (now non-async and non-blocking)
+  // This method is now non-async as it relies on pre-loaded sources for fast playback.
+  void playBeat(AudioPlayer player) {
     if (kIsWeb) {
+      // Web implementation is handled differently and likely still needs the file path logic
+      String beat = (player == _accentPlayer) ? firstBeat : secondBeat;
+      var file = Utils.getAsset(beat);
       var logic1 = kDebugMode ? file.path : file.path.replaceAll('web/', '');
       String path =
           window.location.href.substring(0, window.location.href.length - 1);
@@ -458,23 +509,12 @@ class MetroProvider extends ChangeNotifier {
               'null',
               // live
               path,
-              // 'https://musictools.io/mt-apps/mt-rhythm-toolkit',
-              // localhost
-              // 'http://localhost:8888/web',
             );
-      // print('location ::: path: ${path}. file $logic1');
-      await player.play(UrlSource(logic1));
-      await player.setReleaseMode(ReleaseMode.stop);
-      // playWebMetronomeSound(beat, jhgMetronomeVol);
+      player.play(UrlSource(logic1)); // Use .play() without await
     } else {
-      //await player.stop();
-      final file = Utils.getAsset(beat);
-      if (file.existsSync()) {
-        await player.play(DeviceFileSource(file.path));
-      } else {
-        await player.play(AssetSource(beat));
-      }
-      await player.setReleaseMode(ReleaseMode.stop);
+      // For mobile/desktop, simply call resume/seek to 0 on the pre-loaded player
+      player.seek(Duration.zero);
+      player.resume();
     }
   }
 }
