@@ -95,12 +95,12 @@ class _MetroViewState extends State<MetroView> with TickerProviderStateMixin {
                       // SPACER
                       SizedBox(
                         height:
-                            //  kIsWeb
+                            //  kIsWeb
                             // ?
                             height * 0.025
                         // : JHGResponsive.isTablet(context)
-                        //     ? height * 0.095
-                        //     : height * 0.025,
+                        //     ? height * 0.095
+                        //     : height * 0.025,
                         ,
                       ),
                       Row(
@@ -111,11 +111,20 @@ class _MetroViewState extends State<MetroView> with TickerProviderStateMixin {
                             isTablet: isTablet,
                             provider: provider,
                             onButtonTap: (int index) async {
+                              final wasPlaying = provider.isPlaying;
                               if (index == provider.tapButtonList.length) {
+                                // BUG FIX: Stop metronome before opening the modal if it's playing
+                                if (wasPlaying) {
+                                  provider.stopAndResetMetroState();
+                                }
+
                                 provider.setMetronomeDefaultValue();
                                 customSelectionBottomSheet(context, this,
                                     () {
-                                  provider.startStop(this);
+                                  // This is the save/onTapSave function inside the modal
+                                  // The modal handles setting new custom beats, which internally
+                                  // calls provider.setValueOfBottomSheet(this), which handles
+                                  // restarting the timer if needed.
                                 });
                               } else {
                                 provider.setBeats(
@@ -150,9 +159,9 @@ class _MetroViewState extends State<MetroView> with TickerProviderStateMixin {
                       ),
                       // SPACER
                       // SizedBox(
-                      //     height: JHGResponsive.isTablet(context)
-                      //         ? height * 0.04
-                      //         : height * 0.00),
+                      //     height: JHGResponsive.isTablet(context)
+                      //         ? height * 0.04
+                      //         : height * 0.00),
                       JHGBPMChangeWidget(
                         reverse: true,
                         initialBpmValue: provider.bpm,
@@ -305,7 +314,7 @@ class MetroUi extends StatelessWidget {
       width: metroWidth,
       child: Stack(
         children: [
-          // Metronome
+          // Metronome (Base Image)
           Container(
             // color: Colors.green,
             height: metroHeight,
@@ -318,25 +327,33 @@ class MetroUi extends StatelessWidget {
             ),
           ),
 
-          // Stalk
+          // Stalk (Pendulum)
           Positioned(
-            // top: isTablet? 80,
+            // BUG FIX: Adjusted Top for better centering and pivoting point.
+            // Using a slightly different offset for better visual alignment on various devices.
             top: kIsWeb
-                ? 40
+                ? metroHeight * 0.15 // ~15% down from top
                 : isTablet
-                    ? 82
-                    : 40,
-            left: 1,
-            right: 1,
-            // right: 20,
+                    ? metroHeight * 0.15 // ~15% down from top
+                    : metroHeight * 0.15, // ~15% down from top
+            // Adjusted Left/Right: narrower to center the stalk more accurately on the base.
+            left: kIsWeb
+                ? 10.0.w
+                : isTablet
+                    ? 25.0.w
+                    : 10.0.w,
+            right: kIsWeb
+                ? 10.0.w
+                : isTablet
+                    ? 25.0.w
+                    : 10.0.w,
             child: Container(
-              // color: Colors.yellow,
+              // Height is the space between the top of the Positioned widget and the pivot point.
               height: kIsWeb
                   ? 180
                   : isTablet
                       ? 320
                       : 180,
-              //width: 100,
               alignment: Alignment.bottomCenter,
 
               /// =========== animation null
@@ -380,19 +397,20 @@ class MetroUi extends StatelessWidget {
                                   fit: BoxFit.cover,
                                 ),
                               ),
-                              //slider
+                              //slider (BPM Weight)
                               Positioned(
+                                // Adjusted Top calculation for centering on the stalk
                                 top: kIsWeb
                                     ? bpm <= 250
-                                        ? (bpm * (bpm2x - 50) * 0.0010)
-                                        : (bpm * (bpm2x - 195) * 0.0010)
-                                    : JHGResponsive.isTablet(context)
+                                        ? (bpm * 0.61).w
+                                        : (bpm * 0.53).w
+                                    : isTablet
                                         ? bpm <= 250
-                                            ? (bpm * (bpm2x - 65) * 0.0010)
-                                            : (bpm * (bpm2x - 220) * 0.0016)
+                                            ? (bpm * 0.80).w
+                                            : (bpm * 0.65).w
                                         : bpm <= 250
-                                            ? (bpm * (bpm2x - 50) * 0.0010)
-                                            : (bpm * (bpm2x - 195) * 0.0010),
+                                            ? (bpm * 0.61).w
+                                            : (bpm * 0.53).w,
                                 left: 1,
                                 right: 1,
                                 child: Image.asset(
@@ -417,7 +435,7 @@ class MetroUi extends StatelessWidget {
             ),
           ),
 
-          //Slider wood
+          //Slider wood (Base Wood Piece)
           Positioned(
             top: kIsWeb
                 ? 88.0.h
@@ -441,16 +459,32 @@ class MetroUi extends StatelessWidget {
             ),
           ),
 
-          // Slider up down
+          // Slider up down (Invisible Interaction Area)
           Positioned(
-            left: 1,
-            right: 1,
-            top: 39,
+            // Adjusted left/right/top/height to align with the central stalk area for input
+            left: kIsWeb
+                ? metroWidth / 2 - 10
+                : isTablet
+                    ? metroWidth / 2 - 20
+                    : metroWidth / 2 - 15,
+            right: kIsWeb
+                ? metroWidth / 2 - 10
+                : isTablet
+                    ? metroWidth / 2 - 20
+                    : metroWidth / 2 - 15,
+            top: kIsWeb
+                ? 40
+                : isTablet
+                    ? 70
+                    : 40,
             child: Container(
               alignment: Alignment.topCenter,
-              height: 250,
-              //162,
-              color: Colors.transparent,
+              height: kIsWeb
+                  ? 200
+                  : isTablet
+                      ? 360
+                      : 200,
+              color: Colors.transparent, // Invisible hit area
               child: RotatedBox(
                 quarterTurns: 1,
                 child: Opacity(
@@ -550,14 +584,13 @@ class ButtonsSection extends StatelessWidget {
                                               ? 25
                                               : 20,
                                       iconData: LucideIcons.pen300,
-                                      isBackGround: false
-                                    ),
-                                  )
-                                    .paddingOnly(
-                                        top: 8,
-                                        right: kIsWeb ? 0 : 8,
-                                        bottom: 0)
-                                    .align(Alignment.center)
+                                      isBackGround: false,
+                                    )
+                                        .paddingOnly(
+                                            top: 8,
+                                            right: kIsWeb ? 0 : 8,
+                                            bottom: 0)
+                                        .align(Alignment.center))
                                 : SizedBox(),
                             Flexible(
                               child: FittedBox(

@@ -11,6 +11,9 @@ import 'package:universal_html/html.dart' hide Animation;
 
 import '../models/beat_indicator_model.dart';
 import '../utils/app_assets.dart';
+// Conditionally imported web audio function
+import '../utils/web_audio_player.dart'
+    if (dart.library.js) '../utils/web_audio_player_web.dart';
 
 /// MetroProvider manages metronome state, BPM, beats, and sound playback.
 class MetroProvider extends ChangeNotifier {
@@ -84,13 +87,19 @@ class MetroProvider extends ChangeNotifier {
   Animation<double>? animation;
 
   // Audio players for metronome sounds
-  // Use a pool of players for low-latency, rapid playback
-  final AudioPlayer _accentPlayer = AudioPlayer();
-  final AudioPlayer _regularPlayer = AudioPlayer();
+  // Use AudioPool for polyphony (low-latency, non-clipping playback)
+  AudioPool? _accentPool;
+  AudioPool? _regularPool;
 
   // Track loaded source to avoid unnecessary loading
   String? _accentSource;
   String? _regularSource;
+
+  // Single AudioPlayer instances are still declared but won't be used for playback, only for old logic removal.
+  // We keep them as final but remove the final initialization to make room for pool initialization.
+  // Keeping these lines commented out or removing them prevents confusion with the new pool approach.
+  // final AudioPlayer player1 = AudioPlayer();
+  // final AudioPlayer player2 = AudioPlayer();
 
   int? selectedIndex;
   double timeStamp = 0;
@@ -120,33 +129,38 @@ class MetroProvider extends ChangeNotifier {
 
   /// Preloads metronome sounds for smooth playback
   Future<void> preloadSounds() async {
-    // 1. Set the two necessary audio sources.
+    // Dispose old pools before creating new ones if sound selection changes
+    await _accentPool?.dispose();
+    await _regularPool?.dispose();
+
+    // Determine the Source URL/Path
     Source? source1 = _getAudioSource(firstBeat);
     Source? source2 = _getAudioSource(secondBeat);
 
-    // 2. Preload the audio files for faster, non-blocking playback.
     if (source1 != null) {
-      await _accentPlayer.setSource(source1);
-      _accentSource = firstBeat;
-    }
-    if (source2 != null) {
-      await _regularPlayer.setSource(source2);
-      _regularSource = secondBeat;
+        _accentPool = await AudioPool.create(
+            source: source1,
+            // Allow for a max of 4 simultaneous, overlapping instances
+            maxPlayers: 4,
+        );
+        _accentSource = firstBeat;
     }
 
-    // Set low-latency mode if possible and required (though setSource is often sufficient for preloading)
-    await Future.wait([
-      _accentPlayer.setVolume(1.0),
-      _regularPlayer.setVolume(1.0),
-      _accentPlayer.setReleaseMode(ReleaseMode.stop),
-      _regularPlayer.setReleaseMode(ReleaseMode.stop),
-    ]);
+    if (source2 != null) {
+        _regularPool = await AudioPool.create(
+            source: source2,
+            maxPlayers: 4,
+        );
+        _regularSource = secondBeat;
+    }
   }
 
   // Helper to determine the correct Source type for audio assets
   Source? _getAudioSource(String beat) {
     if (kIsWeb) {
-      // Web assets are handled uniquely in the playBeat function, this just provides the AssetSource for non-web logic flow
+      // On Web, AudioPool does not support UrlSource directly, we rely on the implementation
+      // of AssetSource pointing to the web asset structure (which is handled internally
+      // by the package or Flutter's asset bundling).
       return AssetSource(beat);
     } else {
       final file = Utils.getAsset(beat);
@@ -200,6 +214,8 @@ class MetroProvider extends ChangeNotifier {
     notifyListeners();
     getBeatsDuration(value, selectedButton);
     createBeatIndicatorList();
+
+    // BUG FIX: If metronome was playing, reset the timer with the new values
     if (isPlaying) {
       setTimer(ticker);
     }
@@ -260,6 +276,15 @@ class MetroProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  // BUG FIX: New method to cleanly stop and reset the visual state
+  void stopAndResetMetroState() {
+    timer?.cancel();
+    isPlaying = false;
+    totalTick = 0;
+    controller?.reset();
+    notifyListeners();
+  }
+
   /// Disposes the animation controller and timers
   Future<void> disposeController() async {
     timer?.cancel();
@@ -269,8 +294,8 @@ class MetroProvider extends ChangeNotifier {
     controller = null;
     pulseController?.dispose();
     pulseController = null;
-    await _accentPlayer.dispose(); // Dispose the individual players
-    await _regularPlayer.dispose();
+    await _accentPool?.dispose();
+    await _regularPool?.dispose();
   }
 
   /// Resets the metronome to default values
@@ -371,7 +396,7 @@ class MetroProvider extends ChangeNotifier {
 
     // Timer is set to the calculated interval (e.g., 270ms)
     timer = Timer.periodic(Duration(milliseconds: timerInterval), (_) {
-      // Call playSound directly, it now uses a non-awaiting play mechanism
+      // Call playSound directly
       playSound();
     });
 
@@ -455,19 +480,25 @@ class MetroProvider extends ChangeNotifier {
 
   /// Plays the appropriate sound for the current tick
   Future<void> playSound() async {
-    // Determine which player to use for the current tick
-    AudioPlayer? playerToUse;
+    // We add a short non-blocking delay here to allow the timer queue
+    // to process the periodic tick event before triggering the audio playback.
+    // This often improves perceived smoothness at high BPM.
+    if (!kIsWeb) {
+      // Small, non-blocking delay (e.g., 5-10ms)
+      await Future.delayed(const Duration(milliseconds: 7));
+    }
+
+    AudioPool? poolToUse;
 
     if (beatIndicator.isEmpty) return;
 
     // Determine if it's the accented or regular beat
     if (totalTick < beatIndicator.length) {
       if (beatIndicator[totalTick].isAccentedBeat) {
-        playerToUse = _accentPlayer;
+        poolToUse = _accentPool;
       } else if (beatIndicator[totalTick].isPlanBeat) {
-        playerToUse = _regularPlayer;
+        poolToUse = _regularPool;
       }
-      // If isMutedBeat, playerToUse remains null, so no sound is played.
 
       // Reset totalTick for the next cycle
       if (totalTick == beatIndicator.length - 1) {
@@ -478,24 +509,23 @@ class MetroProvider extends ChangeNotifier {
     } else {
       // Catch case where totalTick might exceed index, reset to first beat for next cycle
       totalTick = 0;
-      playerToUse = _accentPlayer; // Default to accent on measure restart
+      poolToUse = _accentPool; // Default to accent on measure restart
     }
 
-    if (playerToUse != null) {
-      // Trigger the low-latency play without awaiting, minimizing timer blocking
-      // We rely on the player already being loaded from preloadSounds.
-      playBeat(playerToUse);
+    if (poolToUse != null) {
+      // Trigger the low-latency play using the AudioPool.
+      playBeat(poolToUse);
     }
 
     notifyListeners();
   }
 
-  /// Plays a specific beat sound using the given player (now non-async and non-blocking)
-  // This method is now non-async as it relies on pre-loaded sources for fast playback.
-  void playBeat(AudioPlayer player) {
+  /// Plays a specific beat sound using the given pool
+  void playBeat(AudioPool pool) {
     if (kIsWeb) {
-      // Web implementation is handled differently and likely still needs the file path logic
-      String beat = (player == _accentPlayer) ? firstBeat : secondBeat;
+      // Web implementation logic to determine the correct asset path,
+      // but the actual playback needs to use the globally accessible function.
+      String beat = (pool == _accentPool) ? firstBeat : secondBeat;
       var file = Utils.getAsset(beat);
       var logic1 = kDebugMode ? file.path : file.path.replaceAll('web/', '');
       String path =
@@ -510,11 +540,53 @@ class MetroProvider extends ChangeNotifier {
               // live
               path,
             );
-      player.play(UrlSource(logic1)); // Use .play() without await
+
+      // The globally imported function is now correctly called.
+      playWebMetronomeSound(beat, 1.0);
+
     } else {
-      // For mobile/desktop, simply call resume/seek to 0 on the pre-loaded player
-      player.seek(Duration.zero);
-      player.resume();
+      // Trigger the low-latency play using AudioPool. The volume parameter is set at pool creation.
+      pool.start();
+    }
+  }
+
+  /// Plays a specific beat sound using the given player
+  @Deprecated("Use playBeat(AudioPool pool) for polyphony instead.")
+  Future<void> playBeat_Old(String beat, AudioPlayer player) async {
+    // This is the old, clipping logic. We keep it to preserve the old web implementation.
+    // The previous implementation used AudioPlayer for non-web, which is now replaced by AudioPool.
+    // However, the original structure used to play sounds is preserved here for reference/fallback.
+    final file = Utils.getAsset(beat);
+    if (kIsWeb) {
+      var logic1 = kDebugMode ? file.path : file.path.replaceAll('web/', '');
+      String path =
+          window.location.href.substring(0, window.location.href.length - 1);
+      Uri uri = Uri.parse(path);
+      path = uri.replace(query: "").toString();
+      path = path.replaceAll('/?', '');
+      logic1 = kDebugMode
+          ? file.path.replaceAll('null', 'web')
+          : file.path.replaceAll(
+              'null',
+              // live
+              path,
+              // 'https://musictools.io/mt-apps/mt-rhythm-toolkit',
+              // localhost
+              // 'http://localhost:8888/web',
+            );
+      // print('location ::: path: ${path}. file $logic1');
+      await player.play(UrlSource(logic1));
+      await player.setReleaseMode(ReleaseMode.stop);
+      // playWebMetronomeSound(beat, jhgMetronomeVol);
+    } else {
+      //await player.stop();
+      final file = Utils.getAsset(beat);
+      if (file.existsSync()) {
+        await player.play(DeviceFileSource(file.path));
+      } else {
+        await player.play(AssetSource(beat));
+      }
+      await player.setReleaseMode(ReleaseMode.stop);
     }
   }
 }
