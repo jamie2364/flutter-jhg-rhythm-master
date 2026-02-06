@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="fastlane.lanes">
+    
+    
+    
+      
+      <testcase classname="fastlane.lanes" name="0: default_platform" time="0.000348">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="1: upload_to_play_store" time="73.961076">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="2: add_git_tag" time="0.039626">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="3: push_git_tags" time="2.269574">
+        
+      </testcase>
+    
+  </testsuite>
+</testsuites>
