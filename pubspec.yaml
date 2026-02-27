@@ -105,4 +105,4 @@ dependency_overrides:
   flutter_jhg_elements:
     git:
       url: https://github.com/jamie2364/flutter_jhg_elements
-      ref: lucid-icon
+      ref: main
